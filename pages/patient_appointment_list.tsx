@@ -72,7 +72,7 @@ export default function PatientAppointments() {
     }
   };
 
-  const handleSaveComment = (appointmentId) => {
+  const handleSaveComment = (appointmentId: number) => {
     console.log("Saving comment for appointment:", appointmentId);
     // Add logic to save comment
   };
@@ -119,7 +119,7 @@ export default function PatientAppointments() {
               <Select
                   placeholder="Order"
                   allowClear
-                  style={{"width": "7rem"}}
+                  style={{"width": "8rem"}}
               >
                 <Option value="ascending">ascending</Option>
                 <Option value="descending">descending</Option>
