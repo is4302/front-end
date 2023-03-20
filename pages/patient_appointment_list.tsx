@@ -2,11 +2,20 @@ import { useState } from "react";
 import Layout from "@/components/layout";
 import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
+import { DatePicker } from 'antd';
+import { Form, Select } from 'antd';
+import type { Dayjs } from 'dayjs';
+
+const { RangePicker } = DatePicker;
+const { Option } = Select;
+type RangeValue = [Dayjs | null, Dayjs | null] | null;
+
+
 
 const appointments = [
   {
     id: 1,
-    patientName: "John Smith",
+    patientName: "Jane Doe",
     date: "2023-03-25",
     time: "10:00 AM",
   },
@@ -28,18 +37,39 @@ const appointments = [
     date: "2023-03-26",
     time: "2:00 PM",
   },
+  {
+    id: 5,
+    patientName: "Jane Doe",
+    date: "2023-03-25",
+    time: "11:00 AM",
+  },
+  {
+    id: 6,
+    patientName: "Jane Doe",
+    date: "2023-03-25",
+    time: "11:00 AM",
+  },
 ];
 
 export default function PatientAppointments() {
-  const [comments, setComments] = useState({});
-
-  const handleCancelAppointment = (appointmentId) => {
-    console.log("Cancelling appointment:", appointmentId);
-    // Add logic to cancel appointment
+  const [form] = Form.useForm();
+  const [dates, setDates] = useState<RangeValue>(null);
+  const [value, setValue] = useState<RangeValue>(null);
+  const disabledDate = (current: Dayjs) => {
+    if (!dates) {
+      return false;
+    }
+    const tooLate = dates[0] && current.diff(dates[0], 'days') > 7;
+    const tooEarly = dates[1] && dates[1].diff(current, 'days') > 7;
+    return !!tooEarly || !!tooLate;
   };
 
-  const handleCommentChange = (event, appointmentId) => {
-    setComments({ ...comments, [appointmentId]: event.target.value });
+  const onOpenChange = (open: boolean) => {
+    if (open) {
+      setDates([null, null]);
+    } else {
+      setDates(null);
+    }
   };
 
   const handleSaveComment = (appointmentId) => {
@@ -50,7 +80,7 @@ export default function PatientAppointments() {
   return (
     <Layout>
       <motion.div
-        className="max-w-xl mx-auto px-5 xl:px-0"
+        className="mx-auto px-5 xl:px-0"
         initial="hidden"
         whileInView="show"
         animate="show"
@@ -65,57 +95,63 @@ export default function PatientAppointments() {
         }}
       >
         <motion.h1
-          className="text-center font-display text-4xl font-bold tracking-[-0.02em] text-black drop-shadow-sm md:text-7xl md:leading-[5rem]"
+          className="text-center font-display text-xl tracking-[-0.02em] text-black drop-shadow-sm md:text-5xl md:leading-[5rem]"
           variants={FADE_DOWN_ANIMATION_VARIANTS}
         >
-          Patient Appointments
+          Appointments
         </motion.h1>
-
-        <motion.div
-          className="mt-6 space-y-4"
-          variants={FADE_DOWN_ANIMATION_VARIANTS}
-        >
-          {appointments.map((appointment) => (
-            <div
-              key={appointment.id}
-              className="p-4 bg-white border border-gray-300 rounded-md"
-            >
-              <h2 className="text-xl font-bold">{appointment.patientName}</h2>
-              <p className="text-gray-600">
-                {appointment.date} at {appointment.time}
-              </p>
-              <button
-                className="mt-2 px-4 py-2 text-white bg-red-500 rounded-md"
-                onClick={() => handleCancelAppointment(appointment.id)}
+        <motion.div className={"container mx-auto"}>
+          <Form
+              form={form}
+              layout="inline"
+              className={"ml-5"}
+          >
+            <Form.Item label="Select dates">
+              <RangePicker
+                  value={dates || value}
+                  disabledDate={disabledDate}
+                  onCalendarChange={(val) => setDates(val)}
+                  onChange={(val) => setValue(val)}
+                  onOpenChange={onOpenChange}
+              />
+            </Form.Item>
+            <Form.Item label="Order">
+              <Select
+                  placeholder="Order"
+                  allowClear
+                  style={{"width": "7rem"}}
               >
-                Cancel Appointment
-              </button>
-              <div className="mt-4">
-                <label htmlFor={`comment-${appointment.id}`} className="block">
-                  Leave a comment:
-                </label>
-                <textarea
-                  id={`comment-${appointment.id}`}
-                  className="w-full mt-2 p-2 border border-gray-300 rounded-md"
-                  value={comments[appointment.id] || ""}
-                  onChange={(event) =>
-                    handleCommentChange(event, appointment.id)
-                  }
-                />
-                <button
-                  className="mt-2 px-4 py-2
+                <Option value="ascending">ascending</Option>
+                <Option value="descending">descending</Option>
+              </Select>
+            </Form.Item>
+          </Form>
 
-2 text-white bg-blue-500 rounded-md"
-onClick={() => handleSaveComment(appointment.id)}
->
-Save Comment
-</button>
-</div>
-</div>
-))}
-</motion.div>
-</motion.div>
-</Layout>
-);
+          <motion.div
+              className="flex flex-row flex-wrap justify-start"
+              variants={FADE_DOWN_ANIMATION_VARIANTS}
+          >
+            {appointments.map((appointment) => (
+                <div
+                    key={appointment.id}
+                    className="p-4 bg-white border border-gray-300 rounded-md mt-4 ml-5 mr-5"
+                >
+                  <div className="text-xl font-bold">{appointment.patientName}</div>
+
+                  <p className="text-gray-600">
+                    {appointment.date} at {appointment.time}
+                  </p>
+                  <button
+                      className="mt-2 px-4 py-2 text-white bg-blue-500 rounded-md"
+                      onClick={() => handleSaveComment(appointment.id)}>
+                    View past medical records
+                  </button>
+                </div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </Layout>
+  );
 }
 
