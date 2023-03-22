@@ -2,6 +2,8 @@ import { useState } from "react";
 import Layout from "@/components/layout";
 import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
+import {Form, Input} from "antd";
+const { TextArea } = Input;
 
 // Dummy data
 const medicalRecord = {
@@ -38,29 +40,29 @@ export default function EditPatientMedicalHistory() {
         }}
       >
         <motion.h1
-          className="text-center font-display text-4xl font-bold tracking-[-0.02em] text-black drop-shadow-sm md:text-7xl md:leading-[5rem]"
-          variants={FADE_DOWN_ANIMATION_VARIANTS}
+            className="text-center font-display text-xl tracking-[-0.02em] text-black drop-shadow-sm md:text-5xl md:leading-[5rem]"
+            variants={FADE_DOWN_ANIMATION_VARIANTS}
         >
-          Edit Patient Medical History
+          Make Prescriptions
         </motion.h1>
 
         <motion.div className="mt-6 space-y-4" variants={FADE_DOWN_ANIMATION_VARIANTS}>
           <div className="p-4 bg-white border border-gray-300 rounded-md">
-            <h2 className="text-xl font-bold">Date: {medicalRecord.date}</h2>
-            <p className="text-gray-600">Diagnosis: {medicalRecord.diagnosis}</p>
-            <p className="text-gray-600">Treatment: {medicalRecord.treatment}</p>
-
-            <div className="mt-4">
-              <label htmlFor="notes" className="block text-gray-700">
-                Notes / Comments
-              </label>
-              <textarea
-                id="notes"
-                className="block w-full h-32 mt-1 p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-            </div>
+            <p className="text-xl">Date: {medicalRecord.date}</p>
+            <p className="text-gray-600">Doctor Id: 54321</p>
+            <p className="text-gray-600">Patient Id: 12345</p>
+            <Form
+                layout="vertical"
+                style={{ maxWidth: 600 }}
+                className="mt-4"
+            >
+              <Form.Item label="Diagnosis" requiredMark>
+                <TextArea rows={3} />
+              </Form.Item>
+              <Form.Item label="Prescription" requiredMark>
+                <TextArea rows={6} />
+              </Form.Item>
+            </Form>
 
             <button
               className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-md"
