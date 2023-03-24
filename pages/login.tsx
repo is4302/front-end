@@ -1,9 +1,48 @@
 import Layout from "@/components/layout";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
 import Link from "next/link";
+import { useRouter } from "next/router";
+
+
 
 export default function Login() {
+  //interface LoginFormProps {
+    //onSubmit: (email: string, password: string) => void;
+  //}
+
+    //const onSubmit = (email: string, password: string) => void {
+
+    //};
+
+  // const classes = useStyles();
+  //const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+        if (res.ok){
+          alert("success");
+          //redirect to langidng page
+        } else{
+          alert(res.status);
+        }
+        //onSubmit(email, password);
+      } catch (error) {
+        console.error(error);
+        alert(error);
+      }
+    };
+
   return (
     <Layout>
       <motion.div
@@ -29,42 +68,45 @@ export default function Login() {
         </motion.h1>
 
         <motion.form
-          className="mt-6 space-y-4"
-          variants={FADE_DOWN_ANIMATION_VARIANTS}
-          onSubmit={(e) => e.preventDefault()}
-          
+      className="mt-6 space-y-4"
+      variants={FADE_DOWN_ANIMATION_VARIANTS}
+      onSubmit={handleSubmit}
+    >
+      <div>
+        <label htmlFor="email" className="block text-gray-600">
+          Email
+        </label>
+        <input
+          type="email"
+          id="email"
+          placeholder="email"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="password" className="block text-gray-600">
+          Password
+        </label>
+        <input
+          type="password"
+          id="password"
+          placeholder="password"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <button
+          type="submit"
+          className="w-full px-3 py-2 font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600"
         >
-          <div>
-            <label htmlFor="email" className="block text-gray-600">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-gray-600">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              required
-            />
-          </div>
-          <div>
-            <button
-              type="submit"
-              className="w-full px-3 py-2 font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600"
-            >
-              Log in
-            </button>
-          </div>
-        </motion.form>
+          Log in
+        </button>
+      </div>
+    </motion.form>
 
         <motion.div
           className="mt-4 text-center text-gray-500"
@@ -81,3 +123,6 @@ export default function Login() {
     </Layout>
   );
 }
+
+//export default LoginForm;
+//const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
