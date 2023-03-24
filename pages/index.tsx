@@ -58,17 +58,7 @@ export default function Home() {
           className="mx-auto mt-6 flex items-center justify-center space-x-5"
           variants={FADE_DOWN_ANIMATION_VARIANTS}
         >
-          <Link href="/register">
-          <button className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-gray-300 bg-white px-5 py-2 text-sm text-gray-600 shadow-md transition-colors hover:border-gray-800">
-            Register
-          </button>
-        </Link>
-
-          <Link href="/login">
-          <button className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-gray-300 bg-white px-5 py-2 text-sm text-gray-600 shadow-md transition-colors hover:border-gray-800">
-            Login
-          </button>
-        </Link>
+        
 
         <Link href="/appointment">
           <button className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-gray-300 bg-white px-5 py-2 text-sm text-gray-600 shadow-md transition-colors hover:border-gray-800">
@@ -181,3 +171,16 @@ const features = [
     ),
   },
 ];
+
+
+//<Link href="/register">
+//<button className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-gray-300 bg-white px-5 py-2 text-sm text-gray-600 shadow-md transition-colors hover:border-gray-800">
+//Register
+//</button>
+//</Link>
+
+//<Link href="/login">
+//<button className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-gray-300 bg-white px-5 py-2 text-sm text-gray-600 shadow-md transition-colors hover:border-gray-800">
+//Login
+//</button>
+//</Link>

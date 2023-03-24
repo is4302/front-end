@@ -64,7 +64,7 @@ export default function Login() {
           className="text-center font-display text-4xl font-bold tracking-[-0.02em] text-black drop-shadow-sm md:text-7xl md:leading-[5rem]"
           variants={FADE_DOWN_ANIMATION_VARIANTS}
         >
-          Log in
+          Sign in
         </motion.h1>
 
         <motion.form
