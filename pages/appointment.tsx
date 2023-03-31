@@ -16,10 +16,31 @@ const timeSlots = [
 ];
 
 export default function CreateAppointment() {
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
 
-  const handleTimeSlotClick = (time) => {
-    setSelectedTimeSlot(time);
+  const handleTimeSlotClick = (time) => { setSelectedTimeSlot(time);};
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const res = await fetch("/api/create-appointment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ selectedDate, selectedTimeSlot }),
+      });
+      if (res.ok){
+        alert("success");
+        //redirect to landing page
+      } else{
+        alert(res.status);
+      }
+    } catch (error) {
+      console.error(error);
+      alert(error);
+    }
   };
 
   return (
@@ -59,6 +80,7 @@ export default function CreateAppointment() {
               id="date"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               required
+              onChange={(e) => setSelectedDate(e.target.value)}
             />
           </div>
           <div>
@@ -85,13 +107,7 @@ export default function CreateAppointment() {
             <button
               type="submit"
               className="w-full px-3 py-2 font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600"
-              onClick={() => {
-                if (!selectedTimeSlot) {
-                  alert("Please select a time slot");
-                } else {
-                  alert(`Appointment created for ${selectedTimeSlot}`);
-                }
-              }}
+              onSubmit={() => handleSubmit}
             >
               Create Appointment
             </button>
@@ -101,3 +117,6 @@ export default function CreateAppointment() {
     </Layout>
   );
 }
+/**further steps to do: dropdown list of doctors with whom patients want to book an appointment with? also need to connect to db to get doctors schedule
+ * cannot display timings where doctor is not available.
+ **/
