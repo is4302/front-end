@@ -27,6 +27,12 @@ export default function Home() {
           Medical Consultation Platform
         </motion.h1>
 
+        <motion.h1
+          className="text-center font-display text-2xl font-bold tracking-[-0.02em] text-gray-800 drop-shadow-sm md:text-2xl md:leading-[5rem]"
+        >
+          Sign Up Today to Get Started!
+        </motion.h1>
+
         <motion.div
           className="mx-auto mt-6 flex items-center justify-center space-x-5"
           variants={FADE_DOWN_ANIMATION_VARIANTS}

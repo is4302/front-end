@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Cookies from 'js-cookie';
 
 
 
@@ -30,9 +31,17 @@ export default function Login() {
           },
           body: JSON.stringify({ email, password }),
         });
+        //alert("sending");
         if (res.ok){
-          alert("success");
-          //redirect to langidng page
+           alert("success");
+           const utoken = res.token; // Replace with the actual token you get from your authentication provider
+           Cookies.set("usertoken", utoken, { expires: 1 }); // Set the cookie to expire in 7 days
+          // //redirect to landing page
+          // if(res.is_doctor == true) {
+          //   //redirect to doctor page
+          // } else {
+          //   //redirect to patient page
+          // }
         } else{
           alert(res.status);
         }

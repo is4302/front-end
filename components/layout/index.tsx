@@ -8,6 +8,8 @@ import useScroll from "@/lib/hooks/use-scroll";
 import Meta from "./meta";
 import { useSignInModal } from "./sign-in-modal";
 import UserDropdown from "./user-dropdown";
+import { useState } from 'react';
+import Cookies from 'js-cookie';
 
 export default function Layout({
   meta,
@@ -20,9 +22,20 @@ export default function Layout({
   };
   children: ReactNode;
 }) {
-  const { data: session, status } = useSession();
+  //const { data: session, status } = useSession();
   const { SignInModal, setShowSignInModal } = useSignInModal();
   const scrolled = useScroll(50);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const token = Cookies.token; // Replace with the actual token you get from your authentication provider
+  if(token != null) {
+  //Cookies.set('your-token-cookie', token, { expires: 7 }); // Set the cookie to expire in 7 days
+    setIsAuthenticated(true);
+  }
+  const logout = () => {
+    // Remove the cookie when the user logs out
+    Cookies.remove('your-token-cookie');
+    setIsAuthenticated(false);
+  };
 
   return (
     <>
@@ -48,8 +61,8 @@ export default function Layout({
             <p>Our Project Name</p>
           </Link>
           <div>
-            <AnimatePresence>
-              {!session && status !== "loading" ? (
+          <AnimatePresence>
+              {isAuthenticated == true ? (
                 <Link href={"/login"}>
                 <motion.button
                   className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
@@ -60,7 +73,15 @@ export default function Layout({
                 </motion.button>
                 </Link>
               ) : (
-                <UserDropdown />
+                //<Link href={"/login"}>
+                <motion.button
+                  className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
+                  onClick={logout}
+                  {...FADE_IN_ANIMATION_SETTINGS}
+                >
+                  Sign Out
+                </motion.button>
+                //</Link>
               )}
             </AnimatePresence>
           </div>
@@ -69,19 +90,6 @@ export default function Layout({
       <main className="flex w-full flex-col items-center justify-center py-32">
         {children}
       </main>
-      <div className="absolute w-full border-t border-gray-200 bg-white py-5 text-center">
-        <p className="text-gray-500">
-          A free template by{" "}
-          <a
-            className="font-medium text-gray-800 underline transition-colors"
-            href="https://twitter.com/steventey"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Steven Tey
-          </a>
-        </p>
-      </div>
     </>
   );
 }
