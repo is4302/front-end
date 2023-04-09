@@ -2,6 +2,7 @@ import { useState } from "react";
 import Layout from "@/components/layout";
 import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
+import { Badge, Card, Space } from 'antd';
 
 // Dummy data
 const medicalHistory = [
@@ -11,6 +12,7 @@ const medicalHistory = [
     doctor_id: 0,
     diagnosis: "Common cold",
     treatment: "Rest and drink fluids",
+    status: "verified",
   },
   {
     id: 2,
@@ -18,6 +20,7 @@ const medicalHistory = [
     doctor_id: 1,
     diagnosis: "Flu",
     treatment: "Antiviral medication",
+    status: "pending",
   },
   {
     id: 3,
@@ -25,6 +28,23 @@ const medicalHistory = [
     doctor_id: 2,
     diagnosis: "Sprained ankle",
     treatment: "Rest, ice, compression, elevation",
+    status: "pending",
+  },
+  {
+    id: 2,
+    date: "2023-01-30",
+    doctor_id: 2,
+    diagnosis: "Sprained ankle",
+    treatment: "Rest, ice, compression, elevation",
+    status: "unverified",
+  },
+  {
+    id: 4,
+    date: "2023-01-30",
+    doctor_id: 2,
+    diagnosis: "Sprained ankle",
+    treatment: "Rest, ice, compression, elevation",
+    status: "verified",
   },
 ];
 
@@ -64,35 +84,51 @@ export default function PatientMedicalHistory() {
         >
           {patient}&apos;s Medical Record
         </motion.h1>
-          <motion.div
-              className="flex flex-row flex-wrap justify-start"
-              variants={FADE_DOWN_ANIMATION_VARIANTS}
-          >
-            {medicalHistory.map((record) => (
-                <div
-                    key={record.id}
-                    className="p-2 bg-white border border-gray-300 box-border rounded-md mt-4 mr-5"
-                    style={{"flexBasis": "calc(33.33% - 1.25rem)"}}
-                >
-                  <h2 className="text-xl font-bold">Date: {record.date}</h2>
-                  <p className="text-gray-600">Diagnosis: {record.diagnosis}</p>
-                  <p className="text-gray-600">Doctor: {record.doctor_id}</p>
-                  <p className="text-gray-600"
-                  >Treatment: {record.treatment}</p>
-                  {loggedInUser.role === UserRole.DOCTOR && loggedInUser.id ==record.doctor_id
-                      && (
-                          <button
-                              className="mt-1.5 px-3 py-1.5 text-white bg-blue-500 rounded-md"
-                              onClick={() => console.log("Edit record", record.id)}
-                          >
-                            Edit Record
-                          </button>
-                      )}
-                </div>
-            ))}
-          </motion.div>
-
+        <motion.div className="mt-6 space-y-4" variants={FADE_DOWN_ANIMATION_VARIANTS}>
+          {medicalHistory.map(( record) => (
+              renderMedicalRecord(record)
+          ))}
+        </motion.div>
       </motion.div>
     </Layout>
   );
+}
+
+function renderMedicalRecord(medicalRecord) {
+  let text, color;
+  if (medicalRecord.status === "verified") {
+    text = "Verified";
+    color = "green"
+  } else if (medicalRecord.status === "pending") {
+    text = "Pending";
+    color = "yellow"
+  } else {
+    text = "Unverified";
+    color = "red"
+  }
+
+  return (
+      <motion.div className="m-3">
+        <Badge.Ribbon text={text} color={color}>
+          <Card title={`Date: ${medicalRecord.date}`} size="small">
+            <p className="text-gray-600">Diagnosis: {medicalRecord.diagnosis}</p>
+            <p className="text-gray-600">Doctor: {medicalRecord.doctor_id}</p>
+            <p className="text-gray-600">Treatment: {medicalRecord.treatment}</p>
+            <button className="mt-1.5 mr-1 px-3 py-1.5 text-white bg-blue-500 rounded-md"
+                    onClick={() => console.log("Edit record", medicalRecord.id)}>
+              {loggedInUser.role === UserRole.DOCTOR && loggedInUser.id == medicalRecord.doctor_id?
+                  "Edit Record" : "View Details"
+              }
+            </button>
+            {
+              medicalRecord.status === "pending" && loggedInUser.role === UserRole.PATIENT &&
+                <button className="mt-1.5 px-3 py-1.5 text-white bg-blue-500 rounded-md"
+                        onClick={() => console.log("Verify record", medicalRecord.id)}>
+                  Verify Record
+                </button>
+            }
+          </Card>
+        </Badge.Ribbon>
+      </motion.div>
+  )
 }
