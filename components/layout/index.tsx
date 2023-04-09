@@ -10,6 +10,7 @@ import { useSignInModal } from "./sign-in-modal";
 import UserDropdown from "./user-dropdown";
 import { useState } from 'react';
 import Cookies from 'js-cookie';
+import { isAuthenticated } from "@/lib/auth";
 
 export default function Layout({
   meta,
@@ -25,8 +26,8 @@ export default function Layout({
   //const { data: session, status } = useSession();
   const { SignInModal, setShowSignInModal } = useSignInModal();
   const scrolled = useScroll(50);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const token = Cookies.token; // Replace with the actual token you get from your authentication provider
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
   if(token != null) {
   //Cookies.set('your-token-cookie', token, { expires: 7 }); // Set the cookie to expire in 7 days
     setIsAuthenticated(true);
@@ -62,7 +63,7 @@ export default function Layout({
           </Link>
           <div>
           <AnimatePresence>
-              {isAuthenticated == true ? (
+              {isAuthenticated == false ? (
                 <Link href={"/login"}>
                 <motion.button
                   className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"

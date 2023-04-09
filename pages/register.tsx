@@ -3,10 +3,11 @@ import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
 import Link from "next/link";
 import React,{ useState } from "react";
+import { useRouter } from "next/router";
 
 export default function Register() {
 
-
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmedPassword, setConfirmedPassword] = useState("");
@@ -20,7 +21,7 @@ export default function Register() {
       return;
     }
     try {
-      const res = await fetch("/api/login", {
+      const res = await fetch("	http://127.0.0.1:8000/api/signup/patient", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,7 +29,8 @@ export default function Register() {
         body: JSON.stringify({ email, password }),
       });
       if (res.ok){
-        alert("success");
+        alert("Registration successful, please login");
+        router.push("/login");
         //redirect to langidng page
       } else{
         alert(res.status);

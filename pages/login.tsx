@@ -21,10 +21,11 @@ export default function Login() {
   //const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const router = useRouter();
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       try {
-        const res = await fetch("/api/login", {
+        const res = await fetch("http://127.0.0.1:8000/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -32,18 +33,17 @@ export default function Login() {
           body: JSON.stringify({ email, password }),
         });
         //alert("sending");
+        const userData = await res.json();
         if (res.ok){
            alert("success");
-           const utoken = res.token; // Replace with the actual token you get from your authentication provider
-           Cookies.set("usertoken", utoken, { expires: 1 }); // Set the cookie to expire in 7 days
-          // //redirect to landing page
-          // if(res.is_doctor == true) {
-          //   //redirect to doctor page
-          // } else {
-          //   //redirect to patient page
-          // }
+           const uToken = userData.token; // Replace with the actual token you get from your authentication provider
+           Cookies.set("userToken", uToken, { expires: 1 }); // Set the cookie to expire in 1 day
+           Cookies.set("is_doctor", userData.is_doctor, { expires: 1 }); // Set the cookie to expire in 1 day
+           Cookies.set("is_patient", userData.is_patient, { expires: 1 }); // Set the cookie to expire in 1 day
+          //redirect to landing page
+          router.push("/landing");
         } else{
-          alert(res.status);
+          alert(userData.non_field_errors);
         }
         //onSubmit(email, password);
       } catch (error) {
