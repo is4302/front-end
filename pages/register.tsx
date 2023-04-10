@@ -103,7 +103,7 @@ export default function Register() {
           <div className="flex space-x-4 center">
             <div className="w-1/2">
               <label htmlFor="height" className="block text-gray-600">
-                Height
+                Height (cm)
               </label>
               <input
                 type="number"
@@ -115,7 +115,7 @@ export default function Register() {
             </div>
             <div className="w-1/2">
               <label htmlFor="dob" className="block text-gray-600">
-                Weight
+                Weight (kg)
               </label>
               <input
                 type="number"

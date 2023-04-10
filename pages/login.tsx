@@ -5,7 +5,6 @@ import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Cookies from 'js-cookie';
-import apiClient from "@/pages/utils/apiClient";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -15,7 +14,13 @@ export default function Login() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const res = await apiClient.post('/signup/patient', { email, password});
+      const res = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
       const userData = await res.json();
       if (res.ok) {
         alert("success");
@@ -23,9 +28,9 @@ export default function Login() {
         Cookies.set("userToken", uToken, { expires: 1 });
         Cookies.set("is_doctor", userData.is_doctor, { expires: 1 });
         Cookies.set("is_patient", userData.is_patient, { expires: 1 });
-        router.push("/landing");
+        router.push("/index");
       } else {
-        alert(userData.non_field_errors);
+        alert(userData.error);
       }
     } catch (error) {
       console.error(error);

@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import jwt from 'jsonwebtoken'; // If you're using JWT tokens
 import { NextApiRequest } from 'next';
 
-export const isPatientAuthenticated = async (req: NextApiRequest) => {
+export const isPatientAuthenticated = async () => {
   //const cookies = req.headers.cookie ? Cookies.parse(req.headers.cookie) : {};
 
    const token = Cookies.get('userToken');
