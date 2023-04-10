@@ -30,7 +30,7 @@ export default function Layout({
   const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
   if(token != null) {
   //Cookies.set('your-token-cookie', token, { expires: 7 }); // Set the cookie to expire in 7 days
-    setIsAuthenticated(true);
+    setIsAuthenticated(false);
   }
   const logout = () => {
     // Remove the cookie when the user logs out
