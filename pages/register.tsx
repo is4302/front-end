@@ -11,6 +11,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmedPassword, setConfirmedPassword] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
   function passwordsMatch(password: string, confirmedPassword: string): boolean {
     return password === confirmedPassword;
   }
@@ -26,12 +27,12 @@ export default function Register() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, walletAddress }),
       });
       if (res.ok){
         alert("Registration successful, please login");
         router.push("/login");
-        //redirect to langidng page
+        //redirect to landing page
       } else{
         alert(res.status);
       }
@@ -103,6 +104,18 @@ export default function Register() {
               id="confirm-password"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => setConfirmedPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="text" className="block text-gray-600">
+              Wallet Address
+            </label>
+            <input
+              type="text"
+              id="wallet-address"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              onChange={(e) => setWalletAddress(e.target.value)}
               required
             />
           </div>
