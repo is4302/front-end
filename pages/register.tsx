@@ -5,6 +5,8 @@ import Link from "next/link";
 import React,{ useState } from "react";
 import { useRouter } from "next/router";
 
+import apiClient from "@/pages/utils/apiClient";
+
 export default function Register() {
 
   const router = useRouter();
@@ -22,26 +24,16 @@ export default function Register() {
       return;
     }
     try {
-      const res = await fetch("	http://127.0.0.1:8000/api/signup/patient", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, walletAddress }),
-      });
-      if (res.ok){
-        alert("Registration successful, please login");
-        router.push("/login");
-        //redirect to landing page
-      } else{
-        alert(res.status);
-      }
-      //onSubmit(email, password);
+      const res = await apiClient.post('/signup/patient', { email, password });
+      alert("Registration successful, please login");
+      router.push("/login");
+    
     } catch (error) {
       console.error(error);
       alert(error);
     }
   };
+  
   return (
     <Layout>
       <motion.div
