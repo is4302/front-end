@@ -16,6 +16,10 @@ export default function Register() {
   const [walletAddress, setWalletAddress] = useState("");
   const [name, setName] = useState("");
   const [dob, setDOB] = useState("");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [history, setHistory] = useState("");
+  const [allergies, setAllergies] = useState("");
   function passwordsMatch(password: string, confirmedPassword: string): boolean {
     return password === confirmedPassword;
   }
@@ -26,7 +30,7 @@ export default function Register() {
       return;
     }
     try {
-      const res = await apiClient.post('/signup/patient', { email, password, walletAddress, name, dob });
+      const res = await apiClient.post('/signup/patient', { email, password, walletAddress, name, dob, height, weight, history, allergies });
       alert("Registration successful, please login");
       router.push("/login");
 
@@ -77,7 +81,7 @@ export default function Register() {
               </label>
               <input
                 type="text"
-                id="fname"
+                id="name"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -92,6 +96,32 @@ export default function Register() {
                 id="dob"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 onChange={(e) => setDOB(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          <div className="flex space-x-4 center">
+            <div className="w-1/2">
+              <label htmlFor="height" className="block text-gray-600">
+                Height
+              </label>
+              <input
+                type="number"
+                id="height"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                onChange={(e) => setHeight(e.target.value)}
+                required
+              />
+            </div>
+            <div className="w-1/2">
+              <label htmlFor="dob" className="block text-gray-600">
+                Weight
+              </label>
+              <input
+                type="number"
+                id="weight"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                onChange={(e) => setWeight(e.target.value)}
                 required
               />
             </div>
@@ -141,6 +171,28 @@ export default function Register() {
               id="wallet-address"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => setWalletAddress(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="text" className="block text-gray-600">
+              Medical History
+            </label>
+            <textarea
+              id="history"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              onChange={(e) => setHistory(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="text" className="block text-gray-600">
+              Allergies
+            </label>
+            <textarea
+              id="allergies"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              onChange={(e) => setAllergies(e.target.value)}
               required
             />
           </div>
