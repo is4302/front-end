@@ -14,6 +14,8 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmedPassword, setConfirmedPassword] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
+  const [name, setName] = useState("");
+  const [dob, setDOB] = useState("");
   function passwordsMatch(password: string, confirmedPassword: string): boolean {
     return password === confirmedPassword;
   }
@@ -24,9 +26,14 @@ export default function Register() {
       return;
     }
     try {
-      const res = await apiClient.post('/signup/patient', { email, password });
+      const res = await apiClient.post('/signup/patient', { email, password, walletAddress, name, dob });
       alert("Registration successful, please login");
       router.push("/login");
+
+      if(res.status === 200) {
+        alert("Registration successful, please login");
+        router.push("/login");
+      }
     
     } catch (error) {
       console.error(error);
@@ -63,18 +70,44 @@ export default function Register() {
           variants={FADE_DOWN_ANIMATION_VARIANTS}
          onSubmit={handleReg}
         >
-          <div>
-            <label htmlFor="email" className="block text-gray-600">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+          <div className="flex space-x-4 center">
+            <div className="w-1/2">
+              <label htmlFor="name" className="block text-gray-600">
+                Name
+              </label>
+              <input
+                type="text"
+                id="fname"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="w-1/2">
+              <label htmlFor="dob" className="block text-gray-600">
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                id="dob"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                onChange={(e) => setDOB(e.target.value)}
+                required
+              />
+            </div>
           </div>
+          <div>
+              <label htmlFor="email" className="block text-gray-600">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
           <div>
             <label htmlFor="password" className="block text-gray-600">
               Password
