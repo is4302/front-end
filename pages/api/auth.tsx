@@ -1,30 +1,36 @@
-// pages/api/auth.ts
-import type { NextApiRequest, NextApiResponse } from 'next';
+// hooks/useAuth.js
+import { useState, useEffect } from 'react';
+import apiClient from '../utils/apiClient';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { token } = req.body;
+export default function useAuth() {
+  const [token, setToken] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  try {
-    // Replace this with your actual authentication logic
-    const isAuthenticated = await authenticateUser(token);
-
-    if (isAuthenticated) {
-      res.status(200).json({ isAuthenticated: true });
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      setToken(storedToken);
+      setLoading(false);
     } else {
-      res.status(401).json({ isAuthenticated: false });
+      setLoading(false);
     }
-  } catch (e) {
-    res.status(500).json({ error: "cannot verify" });
-  }
+  }, []);
+
+  const login = async (email: any, password: any) => {
+    try {
+      const response = await apiClient.post('/login', { email, password });
+      setToken(response.data.token);
+      localStorage.setItem('token', response.data.token);
+    } catch (error) {
+      console.error(error);
+      // Handle error
+    }
+  };
+
+  const logout = () => {
+    setToken('');
+    localStorage.removeItem('token');
+  };
+
+  return { token, loading, login, logout };
 }
-
-async function authenticateUser(token: string) {
-  // Implement your authentication logic here, e.g., call your authentication API
-  // Replace the following example with your actual API call
-  const response = await fetch('https://your-authentication-api.com/check', {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return response.status === 200;
-}
-
