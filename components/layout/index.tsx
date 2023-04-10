@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { ReactNode } from "react";
+import {ReactNode, useEffect, useRef} from "react";
 import useScroll from "@/lib/hooks/use-scroll";
 import Meta from "./meta";
 import { useSignInModal } from "./sign-in-modal";
@@ -27,11 +27,15 @@ export default function Layout({
   const { SignInModal, setShowSignInModal } = useSignInModal();
   const scrolled = useScroll(50);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
-  if(token != null) {
-  //Cookies.set('your-token-cookie', token, { expires: 7 }); // Set the cookie to expire in 7 days
-    setIsAuthenticated(true);
-  }
+
+
+  useEffect(() => {
+    const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
+    if(token != null) {
+    //Cookies.set('your-token-cookie', token, { expires: 7 }); // Set the cookie to expire in 7 days
+      setIsAuthenticated(true);
+    }
+  }, [])
   const logout = () => {
     // Remove the cookie when the user logs out
     Cookies.remove('your-token-cookie');
@@ -77,7 +81,7 @@ export default function Layout({
                 //<Link href={"/login"}>
                 <motion.button
                   className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
-                  onClick={logout}
+                  onClick={() => logout()}
                   {...FADE_IN_ANIMATION_SETTINGS}
                 >
                   Sign Out
