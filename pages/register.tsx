@@ -5,21 +5,12 @@ import Link from "next/link";
 import React,{ useState } from "react";
 import { useRouter } from "next/router";
 
-import apiClient from "@/pages/utils/apiClient";
-
 export default function Register() {
 
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmedPassword, setConfirmedPassword] = useState("");
-  const [walletAddress, setWalletAddress] = useState("");
-  const [name, setName] = useState("");
-  const [dob, setDOB] = useState("");
-  const [height, setHeight] = useState("");
-  const [weight, setWeight] = useState("");
-  const [history, setHistory] = useState("");
-  const [allergies, setAllergies] = useState("");
   function passwordsMatch(password: string, confirmedPassword: string): boolean {
     return password === confirmedPassword;
   }
@@ -30,21 +21,26 @@ export default function Register() {
       return;
     }
     try {
-      const res = await apiClient.post('/signup/patient', { email, password, walletAddress, name, dob, height, weight, history, allergies });
-      alert("Registration successful, please login");
-      router.push("/login");
-
-      if(res.status === 200) {
+      const res = await fetch("	http://127.0.0.1:8000/api/signup/patient", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      if (res.ok){
         alert("Registration successful, please login");
         router.push("/login");
+        //redirect to langidng page
+      } else{
+        alert(res.status);
       }
-    
+      //onSubmit(email, password);
     } catch (error) {
       console.error(error);
       alert(error);
     }
   };
-  
   return (
     <Layout>
       <motion.div
@@ -74,70 +70,18 @@ export default function Register() {
           variants={FADE_DOWN_ANIMATION_VARIANTS}
          onSubmit={handleReg}
         >
-          <div className="flex space-x-4 center">
-            <div className="w-1/2">
-              <label htmlFor="name" className="block text-gray-600">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="w-1/2">
-              <label htmlFor="dob" className="block text-gray-600">
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                id="dob"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                onChange={(e) => setDOB(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-          <div className="flex space-x-4 center">
-            <div className="w-1/2">
-              <label htmlFor="height" className="block text-gray-600">
-                Height
-              </label>
-              <input
-                type="number"
-                id="height"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                onChange={(e) => setHeight(e.target.value)}
-                required
-              />
-            </div>
-            <div className="w-1/2">
-              <label htmlFor="dob" className="block text-gray-600">
-                Weight
-              </label>
-              <input
-                type="number"
-                id="weight"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                onChange={(e) => setWeight(e.target.value)}
-                required
-              />
-            </div>
-          </div>
           <div>
-              <label htmlFor="email" className="block text-gray-600">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+            <label htmlFor="email" className="block text-gray-600">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
           <div>
             <label htmlFor="password" className="block text-gray-600">
               Password
@@ -159,40 +103,6 @@ export default function Register() {
               id="confirm-password"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
               onChange={(e) => setConfirmedPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="text" className="block text-gray-600">
-              Wallet Address
-            </label>
-            <input
-              type="text"
-              id="wallet-address"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              onChange={(e) => setWalletAddress(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="text" className="block text-gray-600">
-              Medical History
-            </label>
-            <textarea
-              id="history"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              onChange={(e) => setHistory(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="text" className="block text-gray-600">
-              Allergies
-            </label>
-            <textarea
-              id="allergies"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              onChange={(e) => setAllergies(e.target.value)}
               required
             />
           </div>
