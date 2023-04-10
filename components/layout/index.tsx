@@ -3,14 +3,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import useScroll from "@/lib/hooks/use-scroll";
 import Meta from "./meta";
 import { useSignInModal } from "./sign-in-modal";
 import UserDropdown from "./user-dropdown";
 import { useState } from 'react';
 import Cookies from 'js-cookie';
-import { isAuthenticated } from "@/lib/user_auth";
+import { isUserAuthenticated } from "@/lib/user_auth";
 
 export default function Layout({
   meta,
@@ -26,15 +26,23 @@ export default function Layout({
   //const { data: session, status } = useSession();
   const { SignInModal, setShowSignInModal } = useSignInModal();
   const scrolled = useScroll(50);
+  //let isAuthenticated = isUserAuthenticated();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
-  if(token != null) {
-  //Cookies.set('your-token-cookie', token, { expires: 7 }); // Set the cookie to expire in 7 days
-    setIsAuthenticated(false);
-  }
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
+      const state = await isUserAuthenticated(); // Use 'await' here to get the result of the promise
+      if (state === true) {
+        setIsAuthenticated(true);
+        //alert("Authenticated");
+      }
+    };
+    checkAuthentication();
+  }, []); // Add any dependencies if needed
+
   const logout = () => {
     // Remove the cookie when the user logs out
-    Cookies.remove('your-token-cookie');
+    Cookies.remove('userToken');
     setIsAuthenticated(false);
   };
 
