@@ -6,51 +6,37 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Cookies from 'js-cookie';
 
-
-
 export default function Login() {
-  //interface LoginFormProps {
-    //onSubmit: (email: string, password: string) => void;
-  //}
-
-    //const onSubmit = (email: string, password: string) => void {
-
-    //};
-
-  // const classes = useStyles();
-  //const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const router = useRouter();
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      try {
-        const res = await fetch("http://127.0.0.1:8000/api/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        });
-        //alert("sending");
-        const userData = await res.json();
-        if (res.ok){
-           alert("success");
-           const uToken = userData.token; // Replace with the actual token you get from your authentication provider
-           Cookies.set("userToken", uToken, { expires: 1 }); // Set the cookie to expire in 1 day
-           Cookies.set("is_doctor", userData.is_doctor, { expires: 1 }); // Set the cookie to expire in 1 day
-           Cookies.set("is_patient", userData.is_patient, { expires: 1 }); // Set the cookie to expire in 1 day
-          //redirect to landing page
-          router.push("/landing");
-        } else{
-          alert(userData.non_field_errors);
-        }
-        //onSubmit(email, password);
-      } catch (error) {
-        console.error(error);
-        alert(error);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+  
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const userData = await res.json();
+      if (res.ok) {
+        alert("success");
+        const uToken = userData.token;
+        Cookies.set("userToken", uToken, { expires: 1 });
+        Cookies.set("is_doctor", userData.is_doctor, { expires: 1 });
+        Cookies.set("is_patient", userData.is_patient, { expires: 1 });
+        router.push("/landing");
+      } else {
+        alert(userData.non_field_errors);
       }
-    };
+    } catch (error) {
+      console.error(error);
+      alert(error);
+    }
+  };
 
   return (
     <Layout>
