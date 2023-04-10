@@ -10,7 +10,7 @@ import { useSignInModal } from "./sign-in-modal";
 import UserDropdown from "./user-dropdown";
 import { useState } from 'react';
 import Cookies from 'js-cookie';
-import { isAuthenticated } from "@/lib/user_auth";
+import { isAuthenticated } from "@/lib/auth";
 
 export default function Layout({
   meta,

@@ -5,7 +5,6 @@ import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Cookies from 'js-cookie';
-import apiClient from "@/pages/utils/apiClient";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -15,7 +14,13 @@ export default function Login() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const res = await apiClient.post('/signup/patient', { email, password});
+      const res = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
       const userData = await res.json();
       if (res.ok) {
         alert("success");
