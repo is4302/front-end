@@ -11,7 +11,7 @@ import UserDropdown from "./user-dropdown";
 import { useState } from 'react';
 import Cookies from 'js-cookie';
 import { isUserAuthenticated } from "@/lib/auth";
-import { router } from "next/client";
+import {useRouter} from "next/router";
 
 export default function Layout({
   meta,
@@ -29,6 +29,8 @@ export default function Layout({
   const scrolled = useScroll(50);
   //let isAuthenticated = isUserAuthenticated();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter()
+  
   useEffect(() => {
     const checkAuthentication = async () => {
       const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
