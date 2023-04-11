@@ -16,8 +16,8 @@ export default function Register() {
   const [walletAddress, setWalletAddress] = useState("");
   const [name, setName] = useState("");
   const [dob, setDOB] = useState("");
-  const [height, setHeight] = useState("");
-  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState();
+  const [weight, setWeight] = useState();
   const [history, setHistory] = useState("");
   const [allergies, setAllergies] = useState("");
   function passwordsMatch(password: string, confirmedPassword: string): boolean {
@@ -29,21 +29,16 @@ export default function Register() {
       alert("Passwords do not match");
       return;
     }
-    try {
-      const res = await apiClient.post('/signup/patient', { email, password, walletAddress, name, dob, height, weight, history, allergies });
-      alert("Registration successful, please login");
-      router.push("/login");
-
-      if(res.status === 200) {
+      apiClient.post('/signup/patient', {
+        name, email, password, wallet_address: walletAddress,
+        profile: {dob, height, weight, history, allergies, name, patient_wallet: walletAddress }
+      }).then(response => {
         alert("Registration successful, please login");
         router.push("/login");
-      }
-    
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  };
+      }).catch(err => {
+        alert(err);
+      })
+  }
   
   return (
     <Layout>
@@ -109,7 +104,7 @@ export default function Register() {
                 type="number"
                 id="height"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                onChange={(e) => setHeight(e.target.value)}
+                onChange={(e) => setHeight(parseInt(e.target.value))}
                 required
               />
             </div>
@@ -121,7 +116,7 @@ export default function Register() {
                 type="number"
                 id="weight"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                onChange={(e) => setWeight(e.target.value)}
+                onChange={(e) => setWeight(parseInt(e.target.value))}
                 required
               />
             </div>
