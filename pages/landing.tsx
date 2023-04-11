@@ -19,15 +19,16 @@ const gridStyle: React.CSSProperties = {
 export default function Landing() {
     const [isPatient, setIsPatient] = useState(true)
     const [userData, setUserData] = useState({
-        name: "", dob: "", height: 0, weight: 0, history: "", allergies: "", wallet: ""
+        name: "", dob: "", height: 0, weight: 0, history: "", allergies: "", wallet: "", hospital: ""
     })
 
     useEffect(() => {
-        let userToken = Cookies.get("userToken"), is_patient = Boolean(Cookies.get("is_patient"))
+        let userToken = Cookies.get("userToken"), is_patient = Cookies.get("is_patient") === "true"
         if (userToken == null) {
             router.push('/login')
         }
-        setIsPatient(is_patient != null && is_patient)
+        console.log(is_patient)
+        setIsPatient(is_patient)
 
         apiClient
             .get('/profile', {headers: {Authorization: `Bearer ${userToken}`}})
@@ -93,10 +94,9 @@ export default function Landing() {
         return (
             <div className="my-10 grid w-full max-w-screen-xl animate-[slide-down-fade_0.5s_ease-in-out] gap-5 px-5 xl:px-0">
                 <Card title={`Good ${greetings()}, Doctor`} bordered={true} style={gridStyle}>
-                    <Card.Grid hoverable={false} style={gridStyle}>Id: </Card.Grid>
-                    <Card.Grid hoverable={false} style={gridStyle}>Name:</Card.Grid>
-                    <Card.Grid hoverable={false} style={gridStyle}>Hospital Name:</Card.Grid>
-                    <Card.Grid hoverable={false} style={gridStyle}>Wallet Address:</Card.Grid>
+                    <Card.Grid hoverable={false} style={gridStyle}>Name: {userData.name}</Card.Grid>
+                    <Card.Grid hoverable={false} style={gridStyle}>Hospital Name: {userData.hospital}</Card.Grid>
+                    <Card.Grid hoverable={false} style={gridStyle}>Wallet Address: {userData.wallet}</Card.Grid>
                 </Card>
             </div>
         )
