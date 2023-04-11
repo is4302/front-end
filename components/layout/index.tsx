@@ -10,7 +10,7 @@ import { useSignInModal } from "./sign-in-modal";
 import UserDropdown from "./user-dropdown";
 import { useState } from 'react';
 import Cookies from 'js-cookie';
-import { isUserAuthenticated } from "@/lib/user_auth";
+import { isUserAuthenticated } from "@/lib/auth";
 
 export default function Layout({
   meta,
@@ -85,7 +85,7 @@ export default function Layout({
                 //<Link href={"/login"}>
                 <motion.button
                   className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
-                  onClick={logout}
+                  onClick={() => logout()}
                   {...FADE_IN_ANIMATION_SETTINGS}
                 >
                   Sign Out

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Layout from "@/components/layout";
 import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
@@ -7,6 +7,7 @@ import { Form, Select } from 'antd';
 import type { Dayjs } from 'dayjs';
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -74,11 +75,6 @@ export default function PatientAppointments() {
     }
   };
 
-  const handleSaveComment = (appointmentId: number) => {
-    console.log("Saving comment for appointment:", appointmentId);
-    // Add logic to save comment
-  };
-
   return (
     <Layout>
       <motion.div
@@ -143,11 +139,19 @@ export default function PatientAppointments() {
                   <p className="text-gray-600">
                     {appointment.date} at {appointment.time}
                   </p>
-                  <button
-                      className="mt-2 px-4 py-2 text-white bg-blue-500 rounded-md"
-                      onClick={() => handleSaveComment(appointment.id)}>
-                    View past medical records
+                  <Link href="/view_patient_history">
+                    <button
+                      className="mt-2 mr-2 px-4 py-2 text-white bg-blue-500 rounded-md">
+                      View past records
                   </button>
+                  </Link>
+                  <Link href="/make_prescription">
+                    <button
+                        className="mt-2 px-4 py-2 text-white bg-green-500 rounded-md"
+                    >
+                      Make a prescription
+                    </button>
+                  </Link>
                 </div>
             ))}
           </motion.div>

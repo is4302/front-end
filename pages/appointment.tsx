@@ -26,8 +26,35 @@ export const getServerSideProps = async () => {
     router.push("/login");
   }
 }
+const doctors = [
+  {
+    id: 1,
+    name: "Dr. John Smith",
+    specialty: "Cardiologist",
+    imageUrl: "https://via.placeholder.com/150",
+  },
+  {
+    id: 2,
+    name: "Dr. Jane Doe",
+    specialty: "Dermatologist",
+    imageUrl: "https://via.placeholder.com/150",
+  },
+  {
+    id: 3,
+    name: "Dr. Alice Johnson",
+    specialty: "Neurologist",
+    imageUrl: "https://via.placeholder.com/150",
+  },
+  {
+    id: 4,
+    name: "Dr. Bob Brown",
+    specialty: "Orthopedic Surgeon",
+    imageUrl: "https://via.placeholder.com/150",
+  },
+];
 
 export default function CreateAppointment() {
+  const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
 
@@ -83,6 +110,19 @@ export default function CreateAppointment() {
           className="mt-6 space-y-4"
           variants={FADE_DOWN_ANIMATION_VARIANTS}
         >
+          <div>
+            <label htmlFor="doctor" className="block text-gray-600">
+              Doctor
+            </label>
+            <select value={selectedDoctor} onChange={(e) => setSelectedDoctor(e.target.value)}>
+
+              {doctors.map((doctor) => (
+
+                <option value={doctor.id}>{doctor.name}</option>
+
+              ))}
+            </select>
+          </div>
           <div>
             <label htmlFor="date" className="block text-gray-600">
               Date
