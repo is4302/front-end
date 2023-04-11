@@ -45,33 +45,47 @@ export default function MakePrescription() {
     checkAuth();
   }, []);
 
-  const handleSave = () => {
-    let medicalRecord = form.getFieldsValue(), date = new Date().toISOString().split('T')[0]
-    apiClient
-        .post('/prescription', {
-          ...medicalRecord,
-          date, patient: patientAddress, doctor: doctorAddress
-        },{headers: {Authorization: `Bearer ${userToken}`}})
+  const handleSave = async () => {
+    let medicalRecord = form.getFieldsValue(),
+      date = new Date().toISOString().split("T")[0];
+    const medicalData = {
+      ...medicalRecord,
+      date,
+      patient: patientAddress,
+      doctor: doctorAddress,
+    };
+    const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(medicalData));
+    const medicalDataBuffer = Buffer.from(medicalDataEncoded);
+    const medicalRecordHash = web3.utils.keccak256(medicalDataBuffer);
+    try {
+      const tx = await addPrescription(patientAddress, medicalRecordHash);
+      console.log("Transaction hash:", tx.hash);
+  
+      // Post the medical data to /prescription only if the transaction is made
+      apiClient
+        .post(
+          "/prescription",
+          {
+            ...medicalRecord,
+            date,
+            patient: patientAddress,
+            doctor: doctorAddress,
+          },
+          { headers: { Authorization: `Bearer ${userToken}` } }
+        )
         .then((response) => {
-          console.log(response.data)
-          alert("Prescrption Added")
-          router.push('/patient_appointment_list')
+          console.log(response.data);
+          alert("Prescription Added");
+          router.push("/patient_appointment_list");
         })
-        .catch(err => {
-          alert(err)
-        })
-
-    // medicalRecord.randomId = window.crypto.getRandomValues(new Uint32Array(1))[0];
-    // const medicalRecordString = JSON.stringify(medicalRecord);
-    // const medicalRecordEncoded = new TextEncoder().encode(medicalRecordString);
-    // const medicalRecordHash = ethers.utils.keccak256(medicalRecordEncoded);
-    // try {
-    //   const tx = await addPrescription(patientAddress, medicalRecordHash);
-    //   console.log("Transaction hash:", tx.hash);
-    // } catch (err) {
-    //   console.error("Error adding prescription:", err);
-    // }
+        .catch((err) => {
+          alert(err);
+        });
+    } catch (err) {
+      console.error("Error adding prescription:", err);
+    }
   };
+  
 
 
   return (
