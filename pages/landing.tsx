@@ -36,7 +36,7 @@ export default function Landing() {
                 setUserData(response.data.data[0])
             })
             .catch(err => {
-                alert(err)
+                router.push('/login')
             })
     }, [])
 
