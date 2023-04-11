@@ -28,9 +28,9 @@ export default function Login() {
         Cookies.set("userToken", uToken, { expires: 1 });
         Cookies.set("is_doctor", userData.is_doctor, { expires: 1 });
         Cookies.set("is_patient", userData.is_patient, { expires: 1 });
-        router.push("/landing");
+        router.push("/");
       } else {
-        alert(userData.non_field_errors);
+        alert(userData.error);
       }
     } catch (error) {
       console.error(error);

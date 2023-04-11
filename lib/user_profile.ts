@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'; // If you're using JWT tokens
 import { NextApiRequest } from 'next';
 
 
-export const isUserAuthenticated = async () => {
+export const getUserProfile = async () => {
   //const cookies = req.headers.cookie ? Cookies.parse(req.headers.cookie) : {};
 
    const token = Cookies.get('userToken');
@@ -13,18 +13,19 @@ export const isUserAuthenticated = async () => {
     return false;
   } else {
     // Get profile of the user from the token
-    const res = await fetch('http://127.0.0.1:8000/api/token/verify/', {
+    const res = await fetch('http://127.0.0.1:8000/api/profile', {
       method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        Bearer: token,
       },
-      body: JSON.stringify({ token }),
     });
     //const data = await res.json();
     //alert(res.status)
     if (res.status == 200) {
-      return true;
+      const data = await res.json();
+      return data.name 
+      //return true;
     }
   }
-  return false;
+  return "Unknown";
 };

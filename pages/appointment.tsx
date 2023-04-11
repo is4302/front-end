@@ -3,6 +3,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { isPatientAuthenticated } from "@/lib/patient_auth";
+import Cookies from "js-cookie";
 
 const timeSlots = [
   "09:00 AM",
@@ -15,6 +18,14 @@ const timeSlots = [
   "04:00 PM",
 ];
 
+export const getServerSideProps = async () => {
+  const router = useRouter();
+  const patient = await isPatientAuthenticated();
+  if (!patient) {
+    alert("You are not authorized to view this page");
+    router.push("/login");
+  }
+}
 const doctors = [
   {
     id: 1,
