@@ -7,9 +7,7 @@ import Cookies from "js-cookie";
 import {useEffect, useState} from "react";
 import Balancer from "react-wrap-balancer";
 import apiClient from "@/pages/utils/apiClient";
-import {router} from "next/client";
-import {mockSession} from "next-auth/client/__tests__/helpers/mocks";
-import user = mockSession.user;
+import {useRouter} from "next/router";
 
 const gridStyle: React.CSSProperties = {
     width: '100%',
@@ -21,6 +19,7 @@ export default function Landing() {
     const [userData, setUserData] = useState({
         name: "", dob: "", height: 0, weight: 0, history: "", allergies: "", wallet: "", hospital: ""
     })
+    const router = useRouter();
 
     useEffect(() => {
         let userToken = Cookies.get("userToken"), is_patient = Cookies.get("is_patient") === "true"

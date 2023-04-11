@@ -94,7 +94,7 @@ export default function PatientMedicalHistory() {
   );
 }
 
-function renderMedicalRecord(medicalRecord) {
+function renderMedicalRecord(medicalRecord: any) {
   let text, color;
   if (medicalRecord.status === "verified") {
     text = "Verified";
@@ -114,11 +114,8 @@ function renderMedicalRecord(medicalRecord) {
             <p className="text-gray-600">Diagnosis: {medicalRecord.diagnosis}</p>
             <p className="text-gray-600">Doctor: {medicalRecord.doctor_id}</p>
             <p className="text-gray-600">Treatment: {medicalRecord.treatment}</p>
-            <button className="mt-1.5 mr-1 px-3 py-1.5 text-white bg-blue-500 rounded-md"
-                    onClick={() => console.log("Edit record", medicalRecord.id)}>
-              {loggedInUser.role === UserRole.DOCTOR && loggedInUser.id == medicalRecord.doctor_id?
-                  "Edit Record" : "View Details"
-              }
+            <button className="mt-1.5 mr-1 px-3 py-1.5 text-white bg-blue-500 rounded-md">
+               View Details
             </button>
             {
               medicalRecord.status === "pending" && loggedInUser.role === UserRole.PATIENT &&

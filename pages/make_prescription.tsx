@@ -6,8 +6,8 @@ import {Form, Input} from "antd";
 import { addPrescription } from "web3_api/";
 import { ethers } from "ethers";
 import apiClient from "@/pages/utils/apiClient";
-import Cookies, {set} from "js-cookie";
-import {router} from "next/client";
+import Cookies from "js-cookie";
+import {useRouter} from "next/router";
 
 const { TextArea } = Input;
 
@@ -30,6 +30,8 @@ const doctorAddress = "0x123456789";
 export default function MakePrescription() {
   const [form] = Form.useForm()
   const [userToken, setUserTokens] = useState();
+  const router = useRouter();
+
 
   useEffect(() => {
     let token = Cookies.get("userToken")
