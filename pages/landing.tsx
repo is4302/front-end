@@ -6,7 +6,10 @@ import { Card } from 'antd';
 import Cookies from "js-cookie";
 import {useEffect, useState} from "react";
 import Balancer from "react-wrap-balancer";
-import ComponentGrid from "@/components/home/component-grid";
+import apiClient from "@/pages/utils/apiClient";
+import {router} from "next/client";
+import {mockSession} from "next-auth/client/__tests__/helpers/mocks";
+import user = mockSession.user;
 
 const gridStyle: React.CSSProperties = {
     width: '100%',
@@ -14,7 +17,28 @@ const gridStyle: React.CSSProperties = {
 };
 
 export default function Landing() {
-    const user = "test"
+    const [isPatient, setIsPatient] = useState(true)
+    const [userData, setUserData] = useState({
+        name: "", dob: "", height: 0, weight: 0, history: "", allergies: "", wallet: ""
+    })
+
+    useEffect(() => {
+        let userToken = Cookies.get("userToken"), is_patient = Boolean(Cookies.get("is_patient"))
+        if (userToken == null) {
+            router.push('/login')
+        }
+        setIsPatient(is_patient != null && is_patient)
+
+        apiClient
+            .get('/profile', {headers: {Authorization: `Bearer ${userToken}`}})
+            .then((response) => {
+                // console.log(response.data)
+                setUserData(response.data.data[0])
+            })
+            .catch(err => {
+                alert(err)
+            })
+    }, [])
 
     const greetings = () => {
         let currentTime = new Date().getHours()
@@ -30,7 +54,6 @@ export default function Landing() {
     }
 
     function renderTabs() {
-        let isPatient = true
         let tabList
         if (isPatient) {
             tabList = tabs.patient
@@ -53,17 +76,16 @@ export default function Landing() {
     }
 
     function renderDiffViews() {
-        let isPatient = true
         if (isPatient) {
             return (
                 <div className="my-10 grid w-full max-w-screen-xl animate-[slide-down-fade_0.5s_ease-in-out] gap-5 px-5 xl:px-0">
                     <Card title={`Good ${greetings()}, Patient`} bordered={true} style={gridStyle}>
-                        <Card.Grid hoverable={false} style={gridStyle}>Name:</Card.Grid>
-                        <Card.Grid hoverable={false} style={gridStyle}>Date of Birth:</Card.Grid>
-                        <Card.Grid hoverable={false} style={gridStyle}>Height:</Card.Grid>
-                        <Card.Grid hoverable={false} style={gridStyle}>Weight:</Card.Grid>
-                        <Card.Grid hoverable={false} style={gridStyle}>Allergies: </Card.Grid>
-                        <Card.Grid hoverable={false} style={gridStyle}>Wallet Address:</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Name: {userData.name}</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Date of Birth: {userData.dob}</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Height: {userData.height}</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Weight: {userData.weight}</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Allergies: {userData.allergies}</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Wallet Address: {userData.wallet}</Card.Grid>
                     </Card>
                 </div>
             )
