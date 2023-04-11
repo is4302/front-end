@@ -11,6 +11,7 @@ import UserDropdown from "./user-dropdown";
 import { useState } from 'react';
 import Cookies from 'js-cookie';
 import { isUserAuthenticated } from "@/lib/auth";
+import { router } from "next/client";
 
 export default function Layout({
   meta,
@@ -44,6 +45,7 @@ export default function Layout({
     // Remove the cookie when the user logs out
     Cookies.remove('userToken');
     setIsAuthenticated(false);
+    window.location.reload();
   };
 
   return (
@@ -82,7 +84,6 @@ export default function Layout({
                 </motion.button>
                 </Link>
               ) : (
-                //<Link href={"/login"}>
                 <motion.button
                   className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
                   onClick={() => logout()}
@@ -90,7 +91,6 @@ export default function Layout({
                 >
                   Sign Out
                 </motion.button>
-                //</Link>
               )}
             </AnimatePresence>
           </div>

@@ -1,5 +1,5 @@
 import Layout from "@/components/layout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
 import Link from "next/link";
@@ -18,14 +18,6 @@ const timeSlots = [
   "04:00 PM",
 ];
 
-export const getServerSideProps = async () => {
-  const router = useRouter();
-  const patient = await isPatientAuthenticated();
-  if (!patient) {
-    alert("You are not authorized to view this page");
-    router.push("/login");
-  }
-}
 const doctors = [
   {
     id: 1,
@@ -54,6 +46,19 @@ const doctors = [
 ];
 
 export default function CreateAppointment() {
+  const router = useRouter();
+  useEffect(() => {
+    const checkAuth = async () => {
+      const patient = await isPatientAuthenticated();
+      if (!patient) {
+        alert("You are not authorized to view this page");
+        router.push("/");
+      }
+    };
+    checkAuth();
+  }, []);
+
+
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");

@@ -1,15 +1,28 @@
 import Layout from "@/components/layout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Cookies from 'js-cookie';
+import { isUserAuthenticated } from "@/lib/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
+      const state = await isUserAuthenticated(); // Use 'await' here to get the result of the promise
+      if (state === true) {
+        alert("you are already logged in");
+        router.push("/");
+        //alert("Authenticated");
+      }
+    };
+    checkAuthentication();
+  }, []);
   
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,9 +41,13 @@ export default function Login() {
         Cookies.set("userToken", uToken, { expires: 1 });
         Cookies.set("is_doctor", userData.is_doctor, { expires: 1 });
         Cookies.set("is_patient", userData.is_patient, { expires: 1 });
+        if(userData.is_patient == true){
+          router.push("/landing");
+        }else{
         router.push("/");
+        }
       } else {
-        alert(userData.error);
+        alert(userData.non_field_errors);
       }
     } catch (error) {
       console.error(error);

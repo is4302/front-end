@@ -8,6 +8,7 @@ import { ethers } from "ethers";
 import apiClient from "@/pages/utils/apiClient";
 import Cookies, {set} from "js-cookie";
 import {router} from "next/client";
+import { isDoctorAuthenticated } from "@/lib/doc_auth";
 
 const { TextArea } = Input;
 
@@ -32,12 +33,15 @@ export default function MakePrescription() {
   const [userToken, setUserTokens] = useState();
 
   useEffect(() => {
-    let token = Cookies.get("userToken")
-    if (token == null) {
-      router.push('/login')
-    }
-    setUserTokens(token)
-  }, [])
+    const checkAuth = async () => {
+      const doc = await isDoctorAuthenticated();
+      if (!doc) {
+        alert("You are not authorized to view this page");
+        router.push("/");
+      }
+    };
+    checkAuth();
+  }, []);
 
   const handleSave = () => {
     let medicalRecord = form.getFieldsValue(), date = new Date().toISOString().split('T')[0]

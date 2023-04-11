@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import jwt from 'jsonwebtoken'; // If you're using JWT tokens
 import { NextApiRequest } from 'next';
 
-export const isPatientAuthenticated = async () => {
+export const isDoctorAuthenticated = async () => {
   //const cookies = req.headers.cookie ? Cookies.parse(req.headers.cookie) : {};
 
    const token = Cookies.get('userToken');
@@ -18,8 +18,8 @@ export const isPatientAuthenticated = async () => {
         },
     });
     const data = await res.json();
-    const isPatient = Cookies.get('isPatient');
-    if (data.status === 'success' && isPatient === 'true') {
+    const isDoc = Cookies.get('is_doctor');
+    if (res.status === 200 && isDoc === 'true') {
       return true;
     }
   }

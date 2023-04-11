@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "@/components/layout";
 import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
 import { Badge, Card, Space } from 'antd';
+import Cookies from "js-cookie";
+import { isUserAuthenticated } from "@/lib/auth";
+import { useRouter } from "next/router";
 
 // Dummy data
 const medicalHistory = [
@@ -61,6 +64,18 @@ const loggedInUser = {
 let patient = 'Mr. Test'
 
 export default function PatientMedicalHistory() {
+  const router = useRouter();
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
+      const state = await isUserAuthenticated(); // Use 'await' here to get the result of the promise
+      if (state === false) {
+        alert("You ae not authenticated, please login first.");
+        router.push("/login");
+      }
+    };
+    checkAuthentication();
+  }, []);
   return (
     <Layout>
       <motion.div

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "@/components/layout";
 import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
@@ -6,8 +6,9 @@ import { DatePicker } from 'antd';
 import { Form, Select } from 'antd';
 import type { Dayjs } from 'dayjs';
 import Cookies from "js-cookie";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import Link from "next/link";
+import { isDoctorAuthenticated } from "@/lib/doc_auth";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -55,6 +56,18 @@ const appointments = [
 ];
 
 export default function PatientAppointments() {
+  useEffect(() => {
+    const checkAuth = async () => {
+      const doc = await isDoctorAuthenticated();
+      if (!doc) {
+        alert("You are not authorized to view this page");
+        router.push("/");
+      }
+    };
+    checkAuth();
+  }, []);
+
+
   const [form] = Form.useForm();
   const [dates, setDates] = useState<RangeValue>(null);
   const [value, setValue] = useState<RangeValue>(null);
