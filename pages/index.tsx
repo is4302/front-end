@@ -5,6 +5,8 @@ import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
 import Link from "next/link";
 
 export default function Home() {
+  
+
   return (
     <Layout>
       <motion.div
