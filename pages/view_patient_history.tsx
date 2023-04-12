@@ -101,9 +101,14 @@ export default function PatientMedicalHistory() {
       }
     };
     checkAuthentication();
-    fetchPastMedicalRecords(token)
   }, []);
 
+    useEffect(() => {
+        if(!router.isReady) return;
+        const patientAddress = router.query.patient_wallet as string;
+        const token = Cookies.get("userToken") as string;
+        fetchPastMedicalRecords(token, patientAddress)
+    }, [router.isReady]);
 
   async function fetchPastMedicalRecords(userToken: any) {
     const response = loggedInUser.role === UserRole.PATIENT
@@ -121,6 +126,7 @@ export default function PatientMedicalHistory() {
     );
   
     setMedicalRecords(updatedMedicalRecords);
+
   }
   
 

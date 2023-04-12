@@ -35,7 +35,7 @@ export default function Layout({
     const checkAuthentication = async () => {
       const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
       const state = await isUserAuthenticated(); // Use 'await' here to get the result of the promise
-      if (state === true) {
+      if (state) {
         setIsAuthenticated(true);
         //alert("Authenticated");
       }
@@ -47,7 +47,7 @@ export default function Layout({
     // Remove the cookie when the user logs out
     Cookies.remove('userToken');
     setIsAuthenticated(false);
-    window.location.reload();
+    router.push('/login')
   };
 
   return (
