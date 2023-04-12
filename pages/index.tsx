@@ -23,8 +23,7 @@ export default function Home() {
       if (state === true) {
         setIsAuthenticated(true);
         setUsername(await getUserProfile());
-        console.log(username);
-
+        //console.log(username);
         //alert("Authenticated");
       }
     };
