@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { isPatientAuthenticated } from "@/lib/patient_auth";
 import Cookies from "js-cookie";
+import apiClient from "@/pages/utils/apiClient";
+import moment from "moment";
 
 const timeSlots = [
   "09:00 AM",
@@ -17,6 +19,8 @@ const timeSlots = [
   "03:00 PM",
   "04:00 PM",
 ];
+
+/* dummy data for doctors (testing)
 
 const doctors = [
   {
@@ -44,9 +48,16 @@ const doctors = [
     imageUrl: "https://via.placeholder.com/150",
   },
 ];
+*/
 
 export default function CreateAppointment() {
   const router = useRouter();
+
+  const [doctors, setDoctorsData] = useState([{id: "", name : "", hospitalName: "", doctor_wallet: ""}]);
+  const [selectedDoctor, setSelectedDoctor] = useState({id: "", name : "", hospitalName: "", doctor_wallet: ""});
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
+
   useEffect(() => {
     const checkAuth = async () => {
       const patient = await isPatientAuthenticated();
@@ -56,31 +67,46 @@ export default function CreateAppointment() {
       }
     };
     checkAuth();
+
+    let userToken = Cookies.get("userToken");
+
+    apiClient
+          .get('/list/doctor', {headers: {Authorization: `Bearer ${userToken}`}})
+          .then((response) => {
+              console.log(response.data)
+              setDoctorsData(response.data)
+          })
+          .catch(err => {
+            alert(err);
+          })
   }, []);
-
-
-  const [selectedDoctor, setSelectedDoctor] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
 
   const handleTimeSlotClick = (time) => { setSelectedTimeSlot(time);};
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const res = await fetch("/api/create-appointment", {
-        method: "POST",
+      let userToken = Cookies.get("userToken");
+      var momentObj = moment(selectedDate + selectedTimeSlot, 'YYYY-MM-DDLT');
+      var dateTime = momentObj.format('YYYY-MM-DDTHH:mm:s');
+
+      const res1 = await fetch('http://127.0.0.1:8000/api/profile', {
         headers: {
-          "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken}`,
         },
-        body: JSON.stringify({ selectedDate, selectedTimeSlot }),
       });
-      if (res.ok){
-        alert("success");
-        //redirect to landing page
-      } else{
-        alert(res.status);
+
+      const data = await res1.json();
+
+      const res = await apiClient.post('/appointment', {patient: data.data[0].wallet, doctor: selectedDoctor.doctor_wallet, appointment_time: dateTime }, {headers: {Authorization: `Bearer ${userToken}`}});
+
+      console.log(res);
+
+      if(res.status === 200) {
+        alert("Appointment successfully set");
+        router.push("/profile");
       }
+    
     } catch (error) {
       console.error(error);
       alert(error);
@@ -111,19 +137,20 @@ export default function CreateAppointment() {
           Create Appointment
         </motion.h1>
 
-        <motion.div
+        <motion.form
           className="mt-6 space-y-4"
           variants={FADE_DOWN_ANIMATION_VARIANTS}
+          onSubmit={handleSubmit}
         >
           <div>
             <label htmlFor="doctor" className="block text-gray-600">
               Doctor
             </label>
-            <select value={selectedDoctor} onChange={(e) => setSelectedDoctor(e.target.value)}>
+            <select value={selectedDoctor.doctor_wallet} onChange={(e) => setSelectedDoctor(e.target.value)}>
 
               {doctors.map((doctor) => (
 
-                <option value={doctor.id}>{doctor.name}</option>
+                <option value={doctor.doctor_wallet}>{doctor.name}</option>
 
               ))}
             </select>
@@ -164,16 +191,14 @@ export default function CreateAppointment() {
             <button
               type="submit"
               className="w-full px-3 py-2 font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600"
-              onSubmit={() => handleSubmit}
             >
               Create Appointment
             </button>
           </div>
-        </motion.div>
+        </motion.form>
       </motion.div>
     </Layout>
   );
 }
-/**further steps to do: dropdown list of doctors with whom patients want to book an appointment with? also need to connect to db to get doctors schedule
- * cannot display timings where doctor is not available.
+/**TO DO: get doctor's appointments --> cannot display timings where doctor is not available.
  **/
