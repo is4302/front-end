@@ -143,7 +143,7 @@ export default function PatientAppointments() {
                         <p className="text-gray-600">
                           {getDate(appointment.appointment_time)} at {getTime(appointment.appointment_time)}
                         </p>
-                        <Link href={`/view_patient_history`}>
+                        <Link href={`/view_patient_history?patient_wallet=${appointment.patient}`}>
                           <button className="mt-2 mr-2 px-4 py-2 text-white bg-blue-500 rounded-md">
                             View past records
                           </button>

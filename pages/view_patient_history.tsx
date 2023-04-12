@@ -59,11 +59,17 @@ export default function PatientMedicalHistory() {
       }
     };
     checkAuthentication();
-    fetchPastMedicalRecords(token)
   }, []);
 
+    useEffect(() => {
+        if(!router.isReady) return;
+        const patientAddress = router.query.patient_wallet as string;
+        const token = Cookies.get("userToken") as string;
+        fetchPastMedicalRecords(token, patientAddress)
+    }, [router.isReady]);
 
-  function fetchPastMedicalRecords(userToken: any) {
+
+  function fetchPastMedicalRecords(userToken: any, patient: string) {
     if (loggedInUser.role == UserRole.PATIENT) {
       apiClient
           .get('/prescription', { headers: { Authorization: `Bearer ${userToken}` }})
@@ -75,7 +81,6 @@ export default function PatientMedicalHistory() {
             alert(err)
           })
     } else {
-      let patient = localStorage.getItem("walletAddress")
       apiClient
           .get(`/prescription?patient_wallet=${patient}`, { headers: { Authorization: `Bearer ${userToken}` }})
           .then(response => {

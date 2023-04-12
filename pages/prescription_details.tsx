@@ -7,6 +7,7 @@ import { addPrescription } from "web3_api/";
 import { ethers } from "ethers";
 import apiClient from "@/pages/utils/apiClient";
 import {useRouter} from "next/router";
+import Cookies from "js-cookie";
 
 const { TextArea } = Input;
 
@@ -33,7 +34,6 @@ type MedicalRecord = {
 export default function MakePrescription() {
   const [form] = Form.useForm()
   const router = useRouter();
-  const [userToken, setUserTokens] = useState();
   const [patientAddress, setPatientAddress] = useState('')
   const [doctorAddress, setDoctorAddress] = useState('')
   const [record, setRecord] = useState<MedicalRecord>()
@@ -65,6 +65,7 @@ export default function MakePrescription() {
     setRecord(newRecord)
   }, [router.isReady]);
   const handleSave = async () => {
+
     let medicalRecord = form.getFieldsValue(),
       date = new Date().toISOString().split("T")[0];
     const medicalData = {
@@ -81,6 +82,7 @@ export default function MakePrescription() {
       console.log("Transaction hash:", tx.hash);
   
       // Post the medical data to /prescription only if the transaction is made
+      let userToken = Cookies.get('userToken')
       apiClient
         .post(
           "/prescription",
