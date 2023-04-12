@@ -33,7 +33,9 @@ export default function Landing() {
             .get('/profile', {headers: {Authorization: `Bearer ${userToken}`}})
             .then((response) => {
                 // console.log(response.data)
-                setUserData(response.data.data[0])
+                let profileData = response.data.data[0]
+                setUserData(profileData)
+                localStorage.setItem("walletAddress", profileData.wallet)
             })
             .catch(err => {
                 router.push('/login')

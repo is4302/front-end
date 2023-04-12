@@ -8,49 +8,52 @@ import { isUserAuthenticated } from "@/lib/auth";
 import { useRouter } from "next/router";
 
 import{getPrescriptionHash, isPrescriptionApproved, getDoctorRecordCount, getPatientRecord} from "web3_api/";
+import apiClient from "@/pages/utils/apiClient";
+import {mockSession} from "next-auth/client/__tests__/helpers/mocks";
+import user = mockSession.user;
 // Dummy data
-const medicalHistory = [
-  {
-    id: 1,
-    date: "2022-11-05",
-    doctor_id: 0,
-    diagnosis: "Common cold",
-    treatment: "Rest and drink fluids",
-    status: "verified",
-  },
-  {
-    id: 2,
-    date: "2022-12-15",
-    doctor_id: 1,
-    diagnosis: "Flu",
-    treatment: "Antiviral medication",
-    status: "pending",
-  },
-  {
-    id: 3,
-    date: "2023-01-30",
-    doctor_id: 2,
-    diagnosis: "Sprained ankle",
-    treatment: "Rest, ice, compression, elevation",
-    status: "pending",
-  },
-  {
-    id: 2,
-    date: "2023-01-30",
-    doctor_id: 2,
-    diagnosis: "Sprained ankle",
-    treatment: "Rest, ice, compression, elevation",
-    status: "unverified",
-  },
-  {
-    id: 4,
-    date: "2023-01-30",
-    doctor_id: 2,
-    diagnosis: "Sprained ankle",
-    treatment: "Rest, ice, compression, elevation",
-    status: "verified",
-  },
-];
+// const medicalHistory = [
+//   {
+//     id: 1,
+//     date: "2022-11-05",
+//     doctor_id: 0,
+//     diagnosis: "Common cold",
+//     treatment: "Rest and drink fluids",
+//     status: "verified",
+//   },
+//   {
+//     id: 2,
+//     date: "2022-12-15",
+//     doctor_id: 1,
+//     diagnosis: "Flu",
+//     treatment: "Antiviral medication",
+//     status: "pending",
+//   },
+//   {
+//     id: 3,
+//     date: "2023-01-30",
+//     doctor_id: 2,
+//     diagnosis: "Sprained ankle",
+//     treatment: "Rest, ice, compression, elevation",
+//     status: "pending",
+//   },
+//   {
+//     id: 2,
+//     date: "2023-01-30",
+//     doctor_id: 2,
+//     diagnosis: "Sprained ankle",
+//     treatment: "Rest, ice, compression, elevation",
+//     status: "unverified",
+//   },
+//   {
+//     id: 4,
+//     date: "2023-01-30",
+//     doctor_id: 2,
+//     diagnosis: "Sprained ankle",
+//     treatment: "Rest, ice, compression, elevation",
+//     status: "verified",
+//   },
+// ];
 
 const UserRole = {
   PATIENT: "patient",
@@ -66,9 +69,20 @@ let patient = 'Mr. Test'
 
 export default function PatientMedicalHistory() {
   const router = useRouter();
+  const [userToken, setUserToken] = useState()
+  const [medicalRecords, setMedicalRecords] = useState([])
+
   useEffect(() => {
     const checkAuthentication = async () => {
       const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
+      setUserToken(userToken)
+      const isDoctor = Cookies.get("is_doctor") === "true"
+      if (isDoctor) {
+        loggedInUser.role = UserRole.DOCTOR
+      } else {
+        loggedInUser.role = UserRole.PATIENT
+      }
+
       const state = await isUserAuthenticated(); // Use 'await' here to get the result of the promise
       if (state === false) {
         alert("You ae not authenticated, please login first.");
@@ -76,7 +90,33 @@ export default function PatientMedicalHistory() {
       }
     };
     checkAuthentication();
+    fetchPastMedicalRecords(userToken)
   }, []);
+
+
+  function fetchPastMedicalRecords(userToken: any) {
+    if (loggedInUser.role == UserRole.PATIENT) {
+      apiClient
+          .get('/presciption', { headers: { Authorization: `Bearer ${userToken}` }})
+          .then((response) => {
+            setMedicalRecords(response.data)
+          })
+          .catch((err) => {
+            alert(err)
+          })
+    } else {
+      let walletAddress = localStorage.getItem("walletAddress")
+      apiClient
+          .get(`/prescription&patient_wallet=${walletAddress}`)
+          .then(response => {
+            setMedicalRecords(response.data)
+          })
+          .catch((err) => {
+            alert(err)
+          })
+    }
+  }
+
   return (
     <Layout>
       <motion.div
@@ -98,10 +138,10 @@ export default function PatientMedicalHistory() {
             className="text-center font-display text-xl tracking-[-0.02em] text-black drop-shadow-sm md:text-5xl md:leading-[5rem]"
             variants={FADE_DOWN_ANIMATION_VARIANTS}
         >
-          {patient}&apos;s Medical Record
+          Patient Medical Record
         </motion.h1>
         <motion.div className="mt-6 space-y-4" variants={FADE_DOWN_ANIMATION_VARIANTS}>
-          {medicalHistory.map(( record) => (
+          {medicalRecords.map((record) => (
               renderMedicalRecord(record)
           ))}
         </motion.div>
@@ -128,7 +168,7 @@ function renderMedicalRecord(medicalRecord: any) {
         <Badge.Ribbon text={text} color={color}>
           <Card title={`Date: ${medicalRecord.date}`} size="small">
             <p className="text-gray-600">Diagnosis: {medicalRecord.diagnosis}</p>
-            <p className="text-gray-600">Doctor: {medicalRecord.doctor_id}</p>
+            <p className="text-gray-600">Doctor: {medicalRecord.doctor}</p>
             <p className="text-gray-600">Treatment: {medicalRecord.treatment}</p>
             <button className="mt-1.5 mr-1 px-3 py-1.5 text-white bg-blue-500 rounded-md">
                View Details
