@@ -6,13 +6,15 @@ import { Badge, Card, Space } from 'antd';
 import Cookies from "js-cookie";
 import { isUserAuthenticated } from "@/lib/auth";
 import { useRouter } from "next/router";
+import { ethers } from "ethers";
 
-
-import{getPrescriptionHash, isPrescriptionApproved, getDoctorRecordCount, getPatientRecord} from "web3_api/";
+import{getPatientRecordCount, getPrescriptionHash, isPrescriptionApproved, getDoctorRecordCount, getPatientRecord} from "web3_api/";
 import apiClient from "@/pages/utils/apiClient";
 import {mockSession} from "next-auth/client/__tests__/helpers/mocks";
 import user = mockSession.user;
 import Link from "next/link";
+
+
 // Dummy data
 // const medicalHistory = [
 //   {
@@ -35,6 +37,46 @@ const loggedInUser = {
   role: UserRole.DOCTOR,
   id: 1
 };
+
+async function getMedicalRecordStatus(medicalRecord) {
+  // Calculate the medicalRecordHash using the medicalRecord
+  try{
+    const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(medicalRecord));
+    const medicalDataBuffer = Buffer.from(medicalDataEncoded);
+    const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);
+
+    const patientRecordCount = await getPatientRecordCount(medicalRecord.patientAddress);
+    var recordNonce = -1;
+    for (let i=0; i<patientRecordCount; i++) {
+      var recordNonce = await getPatientRecord(medicalRecord.patientAddress, 0);
+      var recordHashOnChain = await getPrescriptionHash(recordNonce);
+      if (medicalRecordHash===recordHashOnChain) {
+        recordNonce = recordNonce;
+        break;
+      }
+    }
+    const prescriptionHash = await getPrescriptionHash(patientAddress, medicalRecordHash);
+  
+    const doctorRecordCount = await getDoctorRecordCount(doctorAddress, medicalRecordHash);
+    const patientRecord = await getPatientRecord(patientAddress, medicalRecordHash);
+
+    if (recordNonce == -1) {
+      return "unverified";
+    } else {
+      const isApproved = await isPrescriptionApproved(recordNonce);
+      if (isApproved==1) {
+        return "verified";
+      } else {
+        return "pending";
+      }
+    }
+  } catch(err) {
+    console.log(err);
+    return "unverified";
+  }
+    
+}
+
 
 export default function PatientMedicalHistory() {
   const router = useRouter();
@@ -68,30 +110,25 @@ export default function PatientMedicalHistory() {
         fetchPastMedicalRecords(token, patientAddress)
     }, [router.isReady]);
 
+  async function fetchPastMedicalRecords(userToken: any) {
+    const response = loggedInUser.role === UserRole.PATIENT
+      ? await apiClient.get('/prescription', { headers: { Authorization: `Bearer ${userToken}` }})
+      : await apiClient.get(`/prescription?patient_wallet=${localStorage.getItem("walletAddress")}`, { headers: { Authorization: `Bearer ${userToken}` }});
+  
+    const fetchedMedicalRecords = response.data;
+    localStorage.setItem("prescriptions", JSON.stringify(fetchedMedicalRecords));
+  
+    const updatedMedicalRecords = await Promise.all(
+      fetchedMedicalRecords.map(async (record) => {
+        const status = await getMedicalRecordStatus(record);
+        return { ...record, status };
+      })
+    );
+  
+    setMedicalRecords(updatedMedicalRecords);
 
-  function fetchPastMedicalRecords(userToken: any, patient: string) {
-    if (loggedInUser.role == UserRole.PATIENT) {
-      apiClient
-          .get('/prescription', { headers: { Authorization: `Bearer ${userToken}` }})
-          .then((response) => {
-            setMedicalRecords(response.data)
-            localStorage.setItem("prescriptions", JSON.stringify(response.data))
-          })
-          .catch((err) => {
-            alert(err)
-          })
-    } else {
-      apiClient
-          .get(`/prescription?patient_wallet=${patient}`, { headers: { Authorization: `Bearer ${userToken}` }})
-          .then(response => {
-            setMedicalRecords(response.data)
-            localStorage.setItem("prescriptions", JSON.stringify(response.data))
-          })
-          .catch((err) => {
-            alert(err)
-          })
-    }
   }
+  
 
   return (
     <Layout>
