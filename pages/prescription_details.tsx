@@ -6,8 +6,6 @@ import {Form, Input} from "antd";
 import { addPrescription } from "web3_api/";
 import { ethers } from "ethers";
 import apiClient from "@/pages/utils/apiClient";
-import Cookies, {set} from "js-cookie";
-import { isDoctorAuthenticated } from "@/lib/doc_auth";
 import {useRouter} from "next/router";
 
 const { TextArea } = Input;
