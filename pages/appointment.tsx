@@ -54,7 +54,7 @@ export default function CreateAppointment() {
   const router = useRouter();
 
   const [doctors, setDoctorsData] = useState([{id: "", name : "", hospitalName: "", doctor_wallet: ""}]);
-  const [selectedDoctor, setSelectedDoctor] = useState({id: "", name : "", hospitalName: "", doctor_wallet: ""});
+  const [selectedDoctor, setSelectedDoctor] = useState(""); //{id: "", name : "", hospitalName: "", doctor_wallet: ""}
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
 
@@ -81,7 +81,7 @@ export default function CreateAppointment() {
           })
   }, []);
 
-  const handleTimeSlotClick = (time) => { setSelectedTimeSlot(time);};
+  const handleTimeSlotClick = (time) => { setSelectedTimeSlot(time)};
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -98,7 +98,7 @@ export default function CreateAppointment() {
 
       const data = await res1.json();
 
-      const res = await apiClient.post('/appointment', {patient: data.data[0].wallet, doctor: selectedDoctor.doctor_wallet, appointment_time: dateTime }, {headers: {Authorization: `Bearer ${userToken}`}});
+      const res = await apiClient.post('/appointment', {patient: data.data[0].wallet, doctor: selectedDoctor, appointment_time: dateTime }, {headers: {Authorization: `Bearer ${userToken}`}});
 
       console.log(res);
 
@@ -146,7 +146,7 @@ export default function CreateAppointment() {
             <label htmlFor="doctor" className="block text-gray-600">
               Doctor
             </label>
-            <select value={selectedDoctor.doctor_wallet} onChange={(e) => setSelectedDoctor(e.target.value)}>
+            <select value={selectedDoctor} onChange={(e) => setSelectedDoctor(e.target.value)}>
 
               {doctors.map((doctor) => (
 
@@ -172,19 +172,11 @@ export default function CreateAppointment() {
               Time
             </label>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-              {timeSlots.map((time, index) => (
-                <button
-                  key={index}
-                  className={`w-full px-3 py-2 text-center border ${
-                    selectedTimeSlot === time
-                      ? "border-blue-500 bg-blue-500 text-white"
-                      : "border-gray-300"
-                  } rounded-md`}
-                  onClick={() => handleTimeSlotClick(time)}
-                >
-                  {time}
-                </button>
-              ))}
+              <select value={selectedTimeSlot} onChange={(e) => setSelectedTimeSlot(e.target.value)}>
+                {timeSlots.map((timeSlot) => (
+                  <option value={timeSlot}>{timeSlot}</option>
+                ))}
+              </select>
             </div>
           </div>
           <div>
@@ -200,5 +192,18 @@ export default function CreateAppointment() {
     </Layout>
   );
 }
-/**TO DO: get doctor's appointments --> cannot display timings where doctor is not available.
- **/
+/*
+{timeSlots.map((time, index) => (
+                <button
+                  key={index}
+                  className={`w-full px-3 py-2 text-center border ${
+                    selectedTimeSlot === time
+                      ? "border-blue-500 bg-blue-500 text-white"
+                      : "border-gray-300"
+                  } rounded-md`}
+                  onClick={() => handleTimeSlotClick(time)}
+                >
+                  {time}
+                </button>
+              ))}
+              */
