@@ -143,10 +143,12 @@ export default function PatientMedicalHistory() {
         >
           Patient Medical Record
         </motion.h1>
-        <motion.div className="mt-6 space-y-4" variants={FADE_DOWN_ANIMATION_VARIANTS}>
-          {medicalRecords.map((record, index) => (
-              renderMedicalRecord(record, index)
-          ))}
+        <motion.div className="mt-6 space-y-4 text-center font-bold" variants={FADE_DOWN_ANIMATION_VARIANTS}>
+          {medicalRecords.length > 0?
+              medicalRecords.map((record, index) => (
+              renderMedicalRecord(record, index)))
+              : "No Record Found"
+          }
         </motion.div>
       </motion.div>
     </Layout>
@@ -154,6 +156,7 @@ export default function PatientMedicalHistory() {
 }
 
 function renderMedicalRecord(medicalRecord: any, index: number) {
+
   let text, color;
   if (medicalRecord.status === "verified") {
     text = "Verified";
