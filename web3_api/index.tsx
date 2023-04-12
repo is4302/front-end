@@ -3,20 +3,35 @@ import MedicalRecords_abi from "./MedicalRecords_abi.json";
 
 const getWeb3Provider = () => {
   if (typeof window.ethereum !== 'undefined') {
-    return new ethers.providers.Web3Provider(window.ethereum);
+    return new ethers.providers.Web3Provider(window.ethereum!);
   } else {
     throw new Error('Ethereum provider not found. Please install MetaMask or another compatible browser extension.');
   }
 };
 
 
-// BNB testnet
-const contractAddress = "0x495aB642Bbd9c2937cc78674aC2EE4c73223dee8";
+// Goerli testnet
+const contractAddress = "0xCC678Bd6b9036af90b217B854b98DB1F03EAD8ef";
+
+export const getUser = async () => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum!);
+  await provider.send("eth_requestAccounts", []);
+  const signer = await provider.getSigner();
+  const signerAddress = await signer.getAddress();
+  sessionStorage.setItem("user", signerAddress);
+  return signerAddress;
+};
 
 // Initialize the contract object
-const getContract = (provider) => {
-  return new ethers.Contract(contractAddress, MedicalRecords_abi, provider);
+const getContract = async (provider) => {
+  const checksummedAddress = ethers.utils.getAddress(contractAddress);
+  const contract = new ethers.Contract(checksummedAddress, MedicalRecords_abi, provider);
+  console.log("successfully get contract");
+  return contract;
 };
+
+
+
 
 export const addPatient = async (patientAddress) => {
   const provider = getWeb3Provider();
@@ -37,11 +52,15 @@ export const addDoctor = async (doctorAddress) => {
 };
 
 export const addPrescription = async (patientAddress, prescriptionHash) => {
+
   const provider = getWeb3Provider();
   await provider.send("eth_requestAccounts", []);
   const signer = await provider.getSigner();
-  const contract = getContract(signer);
+  const contract = await getContract(signer);
+  console.log("got contract");
+  console.log(patientAddress)
   const tx = await contract.addPrescription(patientAddress, prescriptionHash);
+  console.log("successfully called");
   return tx;
 };
 
