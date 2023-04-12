@@ -6,9 +6,9 @@ import React,{ useState } from "react";
 import { useRouter } from "next/router";
 
 import apiClient from "@/pages/utils/apiClient";
+import { addDoctor } from "web3_api/";
 
 export default function Register() {
-
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,10 +25,13 @@ export default function Register() {
   }
   const handleReg = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!passwordsMatch(password, confirmedPassword)) {
-      alert("Passwords do not match");
-      return;
-    }
+    try{
+      if (!passwordsMatch(password, confirmedPassword)) {
+        alert("Passwords do not match");
+        return;
+      }
+      const tx = await addDoctor(walletAddress);
+      console.log("Transaction hash:", tx.hash);
       apiClient.post('/signup/patient', {
         name, email, password, wallet_address: walletAddress,
         profile: {dob, height, weight, history, allergies, name, patient_wallet: walletAddress }
@@ -38,6 +41,10 @@ export default function Register() {
       }).catch(err => {
         alert(err);
       })
+    } catch(err) {
+      alert(err);
+      console.error("Error adding prescription:", err);
+    }   
   }
   
   return (

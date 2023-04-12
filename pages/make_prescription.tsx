@@ -81,6 +81,7 @@ export default function MakePrescription() {
         });
     } catch (err) {
       console.error("Error adding prescription:", err);
+      alert(err);
     }
   };
   

@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { isUserAuthenticated } from "@/lib/auth";
 import { useRouter } from "next/router";
 
+import{getPrescriptionHash, isPrescriptionApproved, getDoctorRecordCount, getPatientRecord} from "web3_api/";
 // Dummy data
 const medicalHistory = [
   {
