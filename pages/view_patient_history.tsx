@@ -85,7 +85,7 @@ export default function PatientMedicalHistory() {
       }
 
       const state = await isUserAuthenticated(); // Use 'await' here to get the result of the promise
-      if (state === false) {
+      if (!state) {
         alert("You ae not authenticated, please login first.");
         router.push("/login");
       }
@@ -173,7 +173,7 @@ function renderMedicalRecord(medicalRecord: any, index: number) {
             <p className="text-gray-600">Diagnosis: {medicalRecord.diagnosis}</p>
             <p className="text-gray-600">Doctor: {medicalRecord.doctor}</p>
             <p className="text-gray-600">Treatment: {medicalRecord.treatment}</p>
-            <Link href={`/prescription_details?index=${index}`}>
+            <Link href={`/prescription_details?new=false&index=${index}`}>
             <button className="mt-1.5 mr-1 px-3 py-1.5 text-white bg-blue-500 rounded-md">
                View Details
             </button>

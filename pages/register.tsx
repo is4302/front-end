@@ -8,6 +8,20 @@ import { useEffect } from "react";
 import apiClient from "@/pages/utils/apiClient";
 import { addPatient, addDoctor } from "web3_api/";
 
+import type { MenuProps } from 'antd';
+import { Menu } from 'antd';
+
+const items: MenuProps['items'] = [
+  {
+    label: 'Patient Registration',
+    key: 'patient',
+  },
+  {
+    label: 'Doctor Registration',
+    key: 'doctor',
+  }
+];
+
 export default function Register() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -21,10 +35,7 @@ export default function Register() {
   const [history, setHistory] = useState("");
   const [allergies, setAllergies] = useState("");
   const [hospitalName, setHospitalName] = useState("");
-  const [userType, setUserType] = useState(null);
-  useEffect(() => {
-    setUserType("patient");
-  }, []);
+  const [userType, setUserType] = useState("patient");
 
   function passwordsMatch(password: string, confirmedPassword: string): boolean {
     return password === confirmedPassword;
@@ -93,11 +104,12 @@ export default function Register() {
     }
   };
 
+  const onClick: MenuProps['onClick'] = (e) => {
+    setUserType(e.key);
+  };
 
   return (
     <Layout>
-
-
       <motion.div
         className="max-w-xl mx-auto px-5 xl:px-0"
         initial="hidden"
@@ -125,23 +137,7 @@ export default function Register() {
           variants={FADE_DOWN_ANIMATION_VARIANTS}
          onSubmit={handleReg}
         >
-          {/* Add a switch to choose user type */}
-        <div className="flex justify-center">
-          <div className="w-1/2">
-            <label htmlFor="userType" className="block text-gray-600">
-              I am a
-            </label>
-            <select
-              id="userType"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              onChange={(e) => setUserType(e.target.value)}
-              required
-              >
-              <option value="patient">Patient</option>
-              <option value="doctor">Doctor</option>
-              </select>
-          </div>
-        </div>
+          <Menu onClick={onClick} mode="horizontal" items={items} />
 
           <div className="flex space-x-4 center">
             <div className="w-1/2">

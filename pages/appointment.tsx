@@ -2,7 +2,6 @@ import Layout from "@/components/layout";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FADE_DOWN_ANIMATION_VARIANTS } from "@/lib/constants";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { isPatientAuthenticated } from "@/lib/patient_auth";
 import Cookies from "js-cookie";
@@ -20,35 +19,6 @@ const timeSlots = [
   "04:00 PM",
 ];
 
-/* dummy data for doctors (testing)
-
-const doctors = [
-  {
-    id: 1,
-    name: "Dr. John Smith",
-    specialty: "Cardiologist",
-    imageUrl: "https://via.placeholder.com/150",
-  },
-  {
-    id: 2,
-    name: "Dr. Jane Doe",
-    specialty: "Dermatologist",
-    imageUrl: "https://via.placeholder.com/150",
-  },
-  {
-    id: 3,
-    name: "Dr. Alice Johnson",
-    specialty: "Neurologist",
-    imageUrl: "https://via.placeholder.com/150",
-  },
-  {
-    id: 4,
-    name: "Dr. Bob Brown",
-    specialty: "Orthopedic Surgeon",
-    imageUrl: "https://via.placeholder.com/150",
-  },
-];
-*/
 
 export default function CreateAppointment() {
   const router = useRouter();
@@ -73,7 +43,6 @@ export default function CreateAppointment() {
     apiClient
           .get('/list/doctor', {headers: {Authorization: `Bearer ${userToken}`}})
           .then((response) => {
-              console.log(response.data)
               setDoctorsData(response.data)
           })
           .catch(err => {
@@ -81,10 +50,12 @@ export default function CreateAppointment() {
           })
   }, []);
 
-  const handleTimeSlotClick = (time) => { setSelectedTimeSlot(time)};
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (selectedDoctor === "") {
+      alert("Must select a doctor")
+      return
+    }
     try {
       let userToken = Cookies.get("userToken");
       var momentObj = moment(selectedDate + selectedTimeSlot, 'YYYY-MM-DDLT');
@@ -104,7 +75,7 @@ export default function CreateAppointment() {
 
       if(res.status === 200) {
         alert("Appointment successfully set");
-        router.push("/profile");
+        router.push("/landing");
       }
     
     } catch (error) {
@@ -146,12 +117,13 @@ export default function CreateAppointment() {
             <label htmlFor="doctor" className="block text-gray-600">
               Doctor
             </label>
-            <select value={selectedDoctor} onChange={(e) => setSelectedDoctor(e.target.value)}>
-
+            <select onChange={(e) => {
+              console.log(e.target.value)
+              setSelectedDoctor(e.target.value)
+            }}>
+              <option value=""></option>
               {doctors.map((doctor) => (
-
                 <option value={doctor.doctor_wallet}>{doctor.name}</option>
-
               ))}
             </select>
           </div>
@@ -189,21 +161,7 @@ export default function CreateAppointment() {
           </div>
         </motion.form>
       </motion.div>
+
     </Layout>
   );
 }
-/*
-{timeSlots.map((time, index) => (
-                <button
-                  key={index}
-                  className={`w-full px-3 py-2 text-center border ${
-                    selectedTimeSlot === time
-                      ? "border-blue-500 bg-blue-500 text-white"
-                      : "border-gray-300"
-                  } rounded-md`}
-                  onClick={() => handleTimeSlotClick(time)}
-                >
-                  {time}
-                </button>
-              ))}
-              */

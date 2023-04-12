@@ -35,7 +35,7 @@ export default function MakePrescription() {
 
   useEffect(() => {
     if(!router.isReady) return;
-    const index = Number(router.query.index);
+    const isNew = Boolean(router.query.new === "true")
     const patient = router.query.address, doctor = localStorage.getItem("walletAddress")
     let allPrescriptions = JSON.parse(localStorage.getItem("prescriptions") || "[]")
     let newRecord = {
@@ -45,9 +45,10 @@ export default function MakePrescription() {
     setPatientAddress(patient)
     setDoctorAddress(doctor)
 
-    if (index >= allPrescriptions.length) {
+    if (isNew) {
       setIsNewRecord(true)
     } else {
+      const index = Number(router.query.index);
       setIsNewRecord(false)
       newRecord = allPrescriptions[index]
       form.setFieldsValue({

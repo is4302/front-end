@@ -9,6 +9,8 @@ import Cookies from "js-cookie";
 import router, { useRouter } from "next/router";
 import Link from "next/link";
 import { isDoctorAuthenticated } from "@/lib/doc_auth";
+import apiClient from "@/pages/utils/apiClient";
+import {response} from "express";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -16,46 +18,47 @@ type RangeValue = [Dayjs | null, Dayjs | null] | null;
 
 
 
-const appointments = [
-  {
-    id: 1,
-    patientName: "Jane Doe",
-    date: "2023-03-25",
-    time: "10:00 AM",
-  },
-  {
-    id: 2,
-    patientName: "Jane Doe",
-    date: "2023-03-25",
-    time: "11:00 AM",
-  },
-  {
-    id: 3,
-    patientName: "Alice Johnson",
-    date: "2023-03-26",
-    time: "9:00 AM",
-  },
-  {
-    id: 4,
-    patientName: "Bob Brown",
-    date: "2023-03-26",
-    time: "2:00 PM",
-  },
-  {
-    id: 5,
-    patientName: "Jane Doe",
-    date: "2023-03-25",
-    time: "11:00 AM",
-  },
-  {
-    id: 6,
-    patientName: "Jane Doe",
-    date: "2023-03-25",
-    time: "11:00 AM",
-  },
-];
+// const appointments = [
+//   {
+//     id: 1,
+//     patientName: "Jane Doe",
+//     date: "2023-03-25",
+//     time: "10:00 AM",
+//   },
+//   {
+//     id: 2,
+//     patientName: "Jane Doe",
+//     date: "2023-03-25",
+//     time: "11:00 AM",
+//   },
+//   {
+//     id: 3,
+//     patientName: "Alice Johnson",
+//     date: "2023-03-26",
+//     time: "9:00 AM",
+//   },
+//   {
+//     id: 4,
+//     patientName: "Bob Brown",
+//     date: "2023-03-26",
+//     time: "2:00 PM",
+//   },
+//   {
+//     id: 5,
+//     patientName: "Jane Doe",
+//     date: "2023-03-25",
+//     time: "11:00 AM",
+//   },
+//   {
+//     id: 6,
+//     patientName: "Jane Doe",
+//     date: "2023-03-25",
+//     time: "11:00 AM",
+//   },
+// ];
 
 export default function PatientAppointments() {
+  const [appointments, setAppointments] = useState([])
   useEffect(() => {
     const checkAuth = async () => {
       const doc = await isDoctorAuthenticated();
@@ -65,6 +68,11 @@ export default function PatientAppointments() {
       }
     };
     checkAuth();
+    let userToken = Cookies.get("userToken");
+    apiClient.get('/appointment', { headers: { Authorization: `Bearer ${userToken}` }})
+        .then((response) => {
+          setAppointments(response.data)
+        })
   }, []);
 
 
@@ -87,6 +95,22 @@ export default function PatientAppointments() {
       setDates(null);
     }
   };
+
+  function getDate(datetimeString: string) {
+    const datetime = new Date(datetimeString);
+    const year = datetime.getUTCFullYear();
+    const month = String(datetime.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(datetime.getUTCDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function getTime(datetimeString: string) {
+    const datetime = new Date(datetimeString);
+
+    const hours = String(datetime.getUTCHours()).padStart(2, '0');
+    const minutes = String(datetime.getUTCMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
 
   return (
     <Layout>
@@ -144,21 +168,21 @@ export default function PatientAppointments() {
           >
             {appointments.map((appointment, index) => (
                 <div
-                    key={appointment.id}
+                    key={index}
                     className="p-4 bg-white border border-gray-300 rounded-md mt-4 ml-5 mr-5"
                 >
-                  <div className="text-xl font-bold">{appointment.patientName}</div>
+                  <div className="text-xl font-bold">Patient: {appointment.patient}</div>
 
                   <p className="text-gray-600">
-                    {appointment.date} at {appointment.time}
+                    {getDate(appointment.appointment_time)} at {getTime(appointment.appointment_time)}
                   </p>
-                  <Link href="/view_patient_history">
+                  <Link href={`/view_patient_history`}>
                     <button
                       className="mt-2 mr-2 px-4 py-2 text-white bg-blue-500 rounded-md">
                       View past records
                   </button>
                   </Link>
-                  <Link href="/prescription_details">
+                  <Link href={`/prescription_details?new=true&patient=${appointment.patient}`}>
                     <button
                         className="mt-2 px-4 py-2 text-white bg-green-500 rounded-md"
                     >
