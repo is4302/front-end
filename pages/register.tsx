@@ -30,7 +30,7 @@ export default function Register() {
         alert("Passwords do not match");
         return;
       }
-      const tx = await addDoctor(walletAddress);
+      const tx = await addPatient(walletAddress);
       console.log("Transaction hash:", tx.hash);
       apiClient.post('/signup/patient', {
         name, email, password, wallet_address: walletAddress,
