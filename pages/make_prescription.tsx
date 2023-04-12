@@ -18,15 +18,13 @@ const medicalRecord = {
   date: "2022-11-05",
   diagnosis: "Common cold",
   treatment: "Rest and drink fluids",
-  patientAddress:"0x9df9b7c2cc5f85a75a7e5e13d0873117c5c5f123",
-  doctorAddress: "0x9de49e60f8cf768b3ae7b3d3e11c1ca48f375d24",
+  patientAddress:"0x6CB4F20F1Cf62c314Cb66De8242b5c0F0eA22DD7",
+  doctorAddress: "0x6CB4F20F1Cf62c314Cb66De8242b5c0F0eA22DD7",
   notes: ""
 };
 
-
-// tmp address
-const patientAddress = "123";
-const doctorAddress = "0x123456789";
+const patientAddress = "0x6CB4F20F1Cf62c314Cb66De8242b5c0F0eA22DD7";
+const doctorAddress = "0x6CB4F20F1Cf62c314Cb66De8242b5c0F0eA22DD7";
 
 export default function MakePrescription() {
   const [form] = Form.useForm()
@@ -56,7 +54,7 @@ export default function MakePrescription() {
     };
     const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(medicalData));
     const medicalDataBuffer = Buffer.from(medicalDataEncoded);
-    const medicalRecordHash = web3.utils.keccak256(medicalDataBuffer);
+    const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);
     try {
       const tx = await addPrescription(patientAddress, medicalRecordHash);
       console.log("Transaction hash:", tx.hash);
