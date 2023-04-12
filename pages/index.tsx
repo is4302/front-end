@@ -10,11 +10,11 @@ import { getUserProfile } from "@/lib/user_profile";
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  console.log(Cookies.get());
+  //console.log(Cookies.get());
   const isPatient = Cookies.get("is_patient");
-  console.log(isPatient);
+  //console.log(isPatient);
   const isDoc = Cookies.get("is_doctor");
-  console.log(isDoc);
+  //console.log(isDoc);
   const [username, setUsername] = useState("");
   useEffect(() => {
     const checkAuthentication = async () => {
