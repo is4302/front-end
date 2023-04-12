@@ -11,11 +11,11 @@ import Link from "next/link";
 import { isDoctorAuthenticated } from "@/lib/doc_auth";
 import apiClient from "@/pages/utils/apiClient";
 import {response} from "express";
+import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 type RangeValue = [Dayjs | null, Dayjs | null] | null;
-
 
 
 // const appointments = [
@@ -24,41 +24,20 @@ type RangeValue = [Dayjs | null, Dayjs | null] | null;
 //     patientName: "Jane Doe",
 //     date: "2023-03-25",
 //     time: "10:00 AM",
-//   },
-//   {
-//     id: 2,
-//     patientName: "Jane Doe",
-//     date: "2023-03-25",
-//     time: "11:00 AM",
-//   },
-//   {
-//     id: 3,
-//     patientName: "Alice Johnson",
-//     date: "2023-03-26",
-//     time: "9:00 AM",
-//   },
-//   {
-//     id: 4,
-//     patientName: "Bob Brown",
-//     date: "2023-03-26",
-//     time: "2:00 PM",
-//   },
-//   {
-//     id: 5,
-//     patientName: "Jane Doe",
-//     date: "2023-03-25",
-//     time: "11:00 AM",
-//   },
-//   {
-//     id: 6,
-//     patientName: "Jane Doe",
-//     date: "2023-03-25",
-//     time: "11:00 AM",
-//   },
+//   }
 // ];
+type Appointment = {
+  appointment_time: string,
+  patient: string
+}
 
 export default function PatientAppointments() {
-  const [appointments, setAppointments] = useState([])
+  const [appointments, setAppointments] = useState<Array<Appointment>>([])
+  const [displayAppointments, setDisplayAppointments] = useState<Array<Appointment>>([]);
+  const [form] = Form.useForm();
+  const [dates, setDates] = useState<RangeValue>(null);
+
+
   useEffect(() => {
     const checkAuth = async () => {
       const doc = await isDoctorAuthenticated();
@@ -72,13 +51,10 @@ export default function PatientAppointments() {
     apiClient.get('/appointment', { headers: { Authorization: `Bearer ${userToken}` }})
         .then((response) => {
           setAppointments(response.data)
+          setDisplayAppointments(response.data)
         })
   }, []);
 
-
-  const [form] = Form.useForm();
-  const [dates, setDates] = useState<RangeValue>(null);
-  const [value, setValue] = useState<RangeValue>(null);
   const disabledDate = (current: Dayjs) => {
     if (!dates) {
       return false;
@@ -86,14 +62,6 @@ export default function PatientAppointments() {
     const tooLate = dates[0] && current.diff(dates[0], 'days') > 7;
     const tooEarly = dates[1] && dates[1].diff(current, 'days') > 7;
     return !!tooEarly || !!tooLate;
-  };
-
-  const onOpenChange = (open: boolean) => {
-    if (open) {
-      setDates([null, null]);
-    } else {
-      setDates(null);
-    }
   };
 
   function getDate(datetimeString: string) {
@@ -110,6 +78,20 @@ export default function PatientAppointments() {
     const hours = String(datetime.getUTCHours()).padStart(2, '0');
     const minutes = String(datetime.getUTCMinutes()).padStart(2, '0');
     return `${hours}:${minutes}`;
+  }
+
+  function filterAppointTime() {
+    const dateRange = form.getFieldValue("date")
+    if (dateRange == null) {
+      setDisplayAppointments(appointments);
+      return;
+    }
+
+    const appointmentRange = appointments.filter((appintment) => {
+      let timeObject = dayjs(appintment.appointment_time);
+      return timeObject.isAfter(dateRange[0]) && timeObject.isBefore(dateRange[1])
+    })
+    setDisplayAppointments(appointmentRange)
   }
 
   return (
@@ -141,24 +123,11 @@ export default function PatientAppointments() {
               layout="inline"
               className={"ml-5"}
           >
-            <Form.Item label="Select dates">
+            <Form.Item label="Select dates" name="date">
               <RangePicker
-                  value={dates || value}
                   disabledDate={disabledDate}
-                  onCalendarChange={(val) => setDates(val)}
-                  onChange={(val) => setValue(val)}
-                  onOpenChange={onOpenChange}
+                  onChange={filterAppointTime}
               />
-            </Form.Item>
-            <Form.Item label="Order">
-              <Select
-                  placeholder="Order"
-                  allowClear
-                  style={{"width": "8rem"}}
-              >
-                <Option value="ascending">ascending</Option>
-                <Option value="descending">descending</Option>
-              </Select>
             </Form.Item>
           </Form>
 
@@ -166,31 +135,27 @@ export default function PatientAppointments() {
               className="flex flex-row flex-wrap justify-start"
               variants={FADE_DOWN_ANIMATION_VARIANTS}
           >
-            {appointments.map((appointment, index) => (
-                <div
-                    key={index}
-                    className="p-4 bg-white border border-gray-300 rounded-md mt-4 ml-5 mr-5"
-                >
-                  <div className="text-xl font-bold">Patient: {appointment.patient}</div>
-
-                  <p className="text-gray-600">
-                    {getDate(appointment.appointment_time)} at {getTime(appointment.appointment_time)}
-                  </p>
-                  <Link href={`/view_patient_history`}>
-                    <button
-                      className="mt-2 mr-2 px-4 py-2 text-white bg-blue-500 rounded-md">
-                      View past records
-                  </button>
-                  </Link>
-                  <Link href={`/prescription_details?new=true&patient=${appointment.patient}`}>
-                    <button
-                        className="mt-2 px-4 py-2 text-white bg-green-500 rounded-md"
-                    >
-                      Make a prescription
-                    </button>
-                  </Link>
-                </div>
-            ))}
+            {
+              displayAppointments.length > 0?
+                  displayAppointments.map((appointment, index) => (
+                      <div key={index} className="p-4 bg-white border border-gray-300 rounded-md mt-4 ml-5 mr-5">
+                        <div className="text-xl font-bold">Patient: {appointment.patient}</div>
+                        <p className="text-gray-600">
+                          {getDate(appointment.appointment_time)} at {getTime(appointment.appointment_time)}
+                        </p>
+                        <Link href={`/view_patient_history`}>
+                          <button className="mt-2 mr-2 px-4 py-2 text-white bg-blue-500 rounded-md">
+                            View past records
+                          </button>
+                        </Link>
+                        <Link href={`/prescription_details?new=true&patient=${appointment.patient}`}>
+                          <button className="mt-2 px-4 py-2 text-white bg-green-500 rounded-md">
+                            Make a prescription
+                          </button>
+                        </Link>
+                      </div>
+                  )) : "No appointments found within the selected range"
+            }
           </motion.div>
         </motion.div>
       </motion.div>

@@ -21,20 +21,29 @@ const medicalRecord = {
   notes: ""
 };
 
+type MedicalRecord = {
+  date: string,
+  doctor: string,
+  patient: string,
+  diagnosis: string,
+  treatment: string,
+  notes: string
+}
+
 export default function MakePrescription() {
   const [form] = Form.useForm()
   const router = useRouter();
   const [userToken, setUserTokens] = useState();
   const [patientAddress, setPatientAddress] = useState('')
   const [doctorAddress, setDoctorAddress] = useState('')
-  const [record, setRecord] = useState({})
+  const [record, setRecord] = useState<MedicalRecord>()
   const [isNewRecord, setIsNewRecord] = useState(true)
 
 
   useEffect(() => {
     if(!router.isReady) return;
     const isNew = Boolean(router.query.new === "true")
-    const patient = router.query.address, doctor = localStorage.getItem("walletAddress")
+    const patient = router.query.patient as string, doctor = localStorage.getItem("walletAddress") as string
     let allPrescriptions = JSON.parse(localStorage.getItem("prescriptions") || "[]")
     let newRecord = {
       date: new Date().toISOString().split('T')[0], doctor: doctor,
@@ -50,7 +59,7 @@ export default function MakePrescription() {
       setIsNewRecord(false)
       newRecord = allPrescriptions[index]
       form.setFieldsValue({
-        diagnosis: newRecord.diagnosis, treatment: newRecord.treatment, notes: record.notes
+        diagnosis: newRecord.diagnosis, treatment: newRecord.treatment, notes: newRecord.notes
       })
     }
     setRecord(newRecord)
@@ -84,7 +93,6 @@ export default function MakePrescription() {
           { headers: { Authorization: `Bearer ${userToken}` } }
         )
         .then((response) => {
-          console.log(response.data);
           alert("Prescription Added");
           router.push("/patient_appointment_list");
         })
@@ -92,12 +100,10 @@ export default function MakePrescription() {
           alert(err);
         });
     } catch (err) {
-      console.error("Error adding prescription:", err);
       alert(err);
     }
   };
   
-
 
   return (
     <Layout>
@@ -126,9 +132,9 @@ export default function MakePrescription() {
 
         <motion.div className="mt-6 space-y-4" variants={FADE_DOWN_ANIMATION_VARIANTS}>
           <div className="p-4 bg-white border border-gray-300 rounded-md">
-            <p className="text-xl">Date: {record.date}</p>
-            <p className="text-gray-600">Doctor Addr: {record.doctor}</p>
-            <p className="text-gray-600">Patient Addr: {record.patient}</p>
+            <p className="text-xl">Date: {record?.date ?? ""}</p>
+            <p className="text-gray-600">Doctor Addr: {record?.doctor ?? ""}</p>
+            <p className="text-gray-600">Patient Addr: {record?.patient ?? ""}</p>
             <Form
                 form={form}
                 layout="vertical"

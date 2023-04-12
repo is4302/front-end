@@ -22,39 +22,7 @@ import Link from "next/link";
 //     diagnosis: "Common cold",
 //     treatment: "Rest and drink fluids",
 //     status: "verified",
-//   },
-//   {
-//     id: 2,
-//     date: "2022-12-15",
-//     doctor_id: 1,
-//     diagnosis: "Flu",
-//     treatment: "Antiviral medication",
-//     status: "pending",
-//   },
-//   {
-//     id: 3,
-//     date: "2023-01-30",
-//     doctor_id: 2,
-//     diagnosis: "Sprained ankle",
-//     treatment: "Rest, ice, compression, elevation",
-//     status: "pending",
-//   },
-//   {
-//     id: 2,
-//     date: "2023-01-30",
-//     doctor_id: 2,
-//     diagnosis: "Sprained ankle",
-//     treatment: "Rest, ice, compression, elevation",
-//     status: "unverified",
-//   },
-//   {
-//     id: 4,
-//     date: "2023-01-30",
-//     doctor_id: 2,
-//     diagnosis: "Sprained ankle",
-//     treatment: "Rest, ice, compression, elevation",
-//     status: "verified",
-//   },
+//   }
 // ];
 
 const UserRole = {
@@ -70,11 +38,11 @@ const loggedInUser = {
 
 export default function PatientMedicalHistory() {
   const router = useRouter();
-  const [userToken, setUserToken] = useState()
+  const [userToken, setUserToken] = useState<string>()
   const [medicalRecords, setMedicalRecords] = useState([])
 
   useEffect(() => {
-    const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
+    const token = Cookies.get("userToken") as string; // Replace with the actual token you get from your authentication provider
     setUserToken(token)
     const checkAuthentication = async () => {
       const isDoctor = Cookies.get("is_doctor") === "true"

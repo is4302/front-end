@@ -30,8 +30,8 @@ export default function Register() {
   const [walletAddress, setWalletAddress] = useState("");
   const [name, setName] = useState("");
   const [dob, setDOB] = useState("");
-  const [height, setHeight] = useState();
-  const [weight, setWeight] = useState();
+  const [height, setHeight] = useState<Number>();
+  const [weight, setWeight] = useState<Number>();
   const [history, setHistory] = useState("");
   const [allergies, setAllergies] = useState("");
   const [hospitalName, setHospitalName] = useState("");

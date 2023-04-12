@@ -14,11 +14,20 @@ const gridStyle: React.CSSProperties = {
     textAlign: 'center',
 };
 
+type userProfile = {
+    name: string,
+    dob: string,
+    height: Number,
+    weight: Number,
+    history: string,
+    allergies: string,
+    wallet: string,
+    hospital: string
+}
+
 export default function Landing() {
     const [isPatient, setIsPatient] = useState(true)
-    const [userData, setUserData] = useState({
-        name: "", dob: "", height: 0, weight: 0, history: "", allergies: "", wallet: "", hospital: ""
-    })
+    const [userData, setUserData] = useState<userProfile>()
     const router = useRouter();
 
     useEffect(() => {
@@ -82,12 +91,12 @@ export default function Landing() {
             return (
                 <div className="my-10 grid w-full max-w-screen-xl animate-[slide-down-fade_0.5s_ease-in-out] gap-5 px-5 xl:px-0">
                     <Card title={`Good ${greetings()}, Patient`} bordered={true} style={gridStyle}>
-                        <Card.Grid hoverable={false} style={gridStyle}>Name: {userData.name}</Card.Grid>
-                        <Card.Grid hoverable={false} style={gridStyle}>Date of Birth: {userData.dob}</Card.Grid>
-                        <Card.Grid hoverable={false} style={gridStyle}>Height: {userData.height}</Card.Grid>
-                        <Card.Grid hoverable={false} style={gridStyle}>Weight: {userData.weight}</Card.Grid>
-                        <Card.Grid hoverable={false} style={gridStyle}>Allergies: {userData.allergies}</Card.Grid>
-                        <Card.Grid hoverable={false} style={gridStyle}>Wallet Address: {userData.wallet}</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Name: {userData?.name ?? ""}</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Date of Birth: {userData?.dob ?? ""}</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Height: {(userData?.height ?? 0).toString()}</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Weight: {(userData?.weight ?? 0).toString()}</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Allergies: {userData?.allergies ?? ""}</Card.Grid>
+                        <Card.Grid hoverable={false} style={gridStyle}>Wallet Address: {userData?.wallet ?? ""}</Card.Grid>
                     </Card>
                 </div>
             )
@@ -95,9 +104,9 @@ export default function Landing() {
         return (
             <div className="my-10 grid w-full max-w-screen-xl animate-[slide-down-fade_0.5s_ease-in-out] gap-5 px-5 xl:px-0">
                 <Card title={`Good ${greetings()}, Doctor`} bordered={true} style={gridStyle}>
-                    <Card.Grid hoverable={false} style={gridStyle}>Name: {userData.name}</Card.Grid>
-                    <Card.Grid hoverable={false} style={gridStyle}>Hospital Name: {userData.hospital}</Card.Grid>
-                    <Card.Grid hoverable={false} style={gridStyle}>Wallet Address: {userData.wallet}</Card.Grid>
+                    <Card.Grid hoverable={false} style={gridStyle}>Name: {userData?.name ?? ""}</Card.Grid>
+                    <Card.Grid hoverable={false} style={gridStyle}>Hospital Name: {userData?.hospital ?? ""}</Card.Grid>
+                    <Card.Grid hoverable={false} style={gridStyle}>Wallet Address: {userData?.wallet ?? ""}</Card.Grid>
                 </Card>
             </div>
         )
