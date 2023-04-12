@@ -23,26 +23,39 @@ const medicalRecord = {
   notes: ""
 };
 
-const patientAddress = "0x6CB4F20F1Cf62c314Cb66De8242b5c0F0eA22DD7";
-const doctorAddress = "0x6CB4F20F1Cf62c314Cb66De8242b5c0F0eA22DD7";
-
 export default function MakePrescription() {
   const [form] = Form.useForm()
-  const [userToken, setUserTokens] = useState();
   const router = useRouter();
+  const [userToken, setUserTokens] = useState();
+  const [patientAddress, setPatientAddress] = useState('')
+  const [doctorAddress, setDoctorAddress] = useState('')
+  const [record, setRecord] = useState({})
+  const [isNewRecord, setIsNewRecord] = useState(true)
 
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const doc = await isDoctorAuthenticated();
-      if (!doc) {
-        alert("You are not authorized to view this page");
-        router.push("/");
-      }
-    };
-    checkAuth();
-  }, []);
+    if(!router.isReady) return;
+    const index = Number(router.query.index);
+    const patient = router.query.address, doctor = localStorage.getItem("walletAddress")
+    let allPrescriptions = JSON.parse(localStorage.getItem("prescriptions") || "[]")
+    let newRecord = {
+      date: new Date().toISOString().split('T')[0], doctor: doctor,
+      patient: patient, diagnosis: "", treatment: "", notes: ""
+    }
+    setPatientAddress(patient)
+    setDoctorAddress(doctor)
 
+    if (index >= allPrescriptions.length) {
+      setIsNewRecord(true)
+    } else {
+      setIsNewRecord(false)
+      newRecord = allPrescriptions[index]
+      form.setFieldsValue({
+        diagnosis: newRecord.diagnosis, treatment: newRecord.treatment, notes: record.notes
+      })
+    }
+    setRecord(newRecord)
+  }, [router.isReady]);
   const handleSave = async () => {
     let medicalRecord = form.getFieldsValue(),
       date = new Date().toISOString().split("T")[0];
@@ -109,37 +122,41 @@ export default function MakePrescription() {
             drop-shadow-sm md:text-5xl md:leading-[5rem]"
             variants={FADE_DOWN_ANIMATION_VARIANTS}
         >
-          Make Prescriptions
+          { isNewRecord ? "Make Prescription": "View Prescription" }
         </motion.h1>
 
         <motion.div className="mt-6 space-y-4" variants={FADE_DOWN_ANIMATION_VARIANTS}>
           <div className="p-4 bg-white border border-gray-300 rounded-md">
-            <p className="text-xl">Date: {medicalRecord.date}</p>
-            <p className="text-gray-600">Doctor Addr: {doctorAddress}</p>
-            <p className="text-gray-600">Patient Addr: {patientAddress}</p>
+            <p className="text-xl">Date: {record.date}</p>
+            <p className="text-gray-600">Doctor Addr: {record.doctor}</p>
+            <p className="text-gray-600">Patient Addr: {record.patient}</p>
             <Form
                 form={form}
                 layout="vertical"
                 style={{ maxWidth: 600 }}
                 className="mt-4"
+                disabled={!isNewRecord}
             >
               <Form.Item name="diagnosis" label="Diagnosis" requiredMark>
                 <TextArea rows={3} />
               </Form.Item>
-              <Form.Item name="treatment" label="Prescription" requiredMark>
+              <Form.Item name="treatment" label="Treatment" requiredMark>
                 <TextArea rows={6} />
               </Form.Item>
               <Form.Item name="notes" label="Notes" requiredMark>
                 <TextArea rows={6} />
               </Form.Item>
             </Form>
+            {
+              isNewRecord &&
+              <button
+                  className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-md"
+                  onClick={handleSave}
+              >
+                Save Changes
+              </button>
+            }
 
-            <button
-              className="mt-4 px-4 py-2 text-white bg-blue-500 rounded-md"
-              onClick={handleSave}
-            >
-              Save Changes
-            </button>
           </div>
         </motion.div>
       </motion.div>

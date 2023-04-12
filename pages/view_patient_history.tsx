@@ -7,10 +7,12 @@ import Cookies from "js-cookie";
 import { isUserAuthenticated } from "@/lib/auth";
 import { useRouter } from "next/router";
 
+
 import{getPrescriptionHash, isPrescriptionApproved, getDoctorRecordCount, getPatientRecord} from "web3_api/";
 import apiClient from "@/pages/utils/apiClient";
 import {mockSession} from "next-auth/client/__tests__/helpers/mocks";
 import user = mockSession.user;
+import Link from "next/link";
 // Dummy data
 // const medicalHistory = [
 //   {
@@ -65,7 +67,6 @@ const loggedInUser = {
   role: UserRole.DOCTOR,
   id: 1
 };
-let patient = 'Mr. Test'
 
 export default function PatientMedicalHistory() {
   const router = useRouter();
@@ -73,9 +74,9 @@ export default function PatientMedicalHistory() {
   const [medicalRecords, setMedicalRecords] = useState([])
 
   useEffect(() => {
+    const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
+    setUserToken(token)
     const checkAuthentication = async () => {
-      const token = Cookies.get("userToken"); // Replace with the actual token you get from your authentication provider
-      setUserToken(userToken)
       const isDoctor = Cookies.get("is_doctor") === "true"
       if (isDoctor) {
         loggedInUser.role = UserRole.DOCTOR
@@ -90,26 +91,28 @@ export default function PatientMedicalHistory() {
       }
     };
     checkAuthentication();
-    fetchPastMedicalRecords(userToken)
+    fetchPastMedicalRecords(token)
   }, []);
 
 
   function fetchPastMedicalRecords(userToken: any) {
     if (loggedInUser.role == UserRole.PATIENT) {
       apiClient
-          .get('/presciption', { headers: { Authorization: `Bearer ${userToken}` }})
+          .get('/prescription', { headers: { Authorization: `Bearer ${userToken}` }})
           .then((response) => {
             setMedicalRecords(response.data)
+            localStorage.setItem("prescriptions", JSON.stringify(response.data))
           })
           .catch((err) => {
             alert(err)
           })
     } else {
-      let walletAddress = localStorage.getItem("walletAddress")
+      let patient = localStorage.getItem("walletAddress")
       apiClient
-          .get(`/prescription&patient_wallet=${walletAddress}`)
+          .get(`/prescription?patient_wallet=${patient}`, { headers: { Authorization: `Bearer ${userToken}` }})
           .then(response => {
             setMedicalRecords(response.data)
+            localStorage.setItem("prescriptions", JSON.stringify(response.data))
           })
           .catch((err) => {
             alert(err)
@@ -141,8 +144,8 @@ export default function PatientMedicalHistory() {
           Patient Medical Record
         </motion.h1>
         <motion.div className="mt-6 space-y-4" variants={FADE_DOWN_ANIMATION_VARIANTS}>
-          {medicalRecords.map((record) => (
-              renderMedicalRecord(record)
+          {medicalRecords.map((record, index) => (
+              renderMedicalRecord(record, index)
           ))}
         </motion.div>
       </motion.div>
@@ -150,7 +153,7 @@ export default function PatientMedicalHistory() {
   );
 }
 
-function renderMedicalRecord(medicalRecord: any) {
+function renderMedicalRecord(medicalRecord: any, index: number) {
   let text, color;
   if (medicalRecord.status === "verified") {
     text = "Verified";
@@ -170,9 +173,11 @@ function renderMedicalRecord(medicalRecord: any) {
             <p className="text-gray-600">Diagnosis: {medicalRecord.diagnosis}</p>
             <p className="text-gray-600">Doctor: {medicalRecord.doctor}</p>
             <p className="text-gray-600">Treatment: {medicalRecord.treatment}</p>
+            <Link href={`/prescription_details?index=${index}`}>
             <button className="mt-1.5 mr-1 px-3 py-1.5 text-white bg-blue-500 rounded-md">
                View Details
             </button>
+          </Link>
             {
               medicalRecord.status === "pending" && loggedInUser.role === UserRole.PATIENT &&
                 <button className="mt-1.5 px-3 py-1.5 text-white bg-blue-500 rounded-md"

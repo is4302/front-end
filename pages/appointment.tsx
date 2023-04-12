@@ -98,7 +98,11 @@ export default function CreateAppointment() {
 
       const data = await res1.json();
 
-      const res = await apiClient.post('/appointment', {patient: data.data[0].wallet, doctor: selectedDoctor.doctor_wallet, appointment_time: dateTime }, {headers: {Authorization: `Bearer ${userToken}`}});
+      const res = await apiClient.post('/appointment', {
+        patient: data.data[0].wallet,
+        doctor: selectedDoctor.doctor_wallet,
+        appointment_time: dateTime
+      }, {headers: {Authorization: `Bearer ${userToken}`}});
 
       console.log(res);
 

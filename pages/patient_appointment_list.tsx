@@ -142,7 +142,7 @@ export default function PatientAppointments() {
               className="flex flex-row flex-wrap justify-start"
               variants={FADE_DOWN_ANIMATION_VARIANTS}
           >
-            {appointments.map((appointment) => (
+            {appointments.map((appointment, index) => (
                 <div
                     key={appointment.id}
                     className="p-4 bg-white border border-gray-300 rounded-md mt-4 ml-5 mr-5"
@@ -158,7 +158,7 @@ export default function PatientAppointments() {
                       View past records
                   </button>
                   </Link>
-                  <Link href="/make_prescription">
+                  <Link href="/prescription_details">
                     <button
                         className="mt-2 px-4 py-2 text-white bg-green-500 rounded-md"
                     >
