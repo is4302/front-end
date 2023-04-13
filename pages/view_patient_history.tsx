@@ -110,10 +110,11 @@ export default function PatientMedicalHistory() {
         fetchPastMedicalRecords(token, patientAddress)
     }, [router.isReady]);
 
-  async function fetchPastMedicalRecords(userToken: any) {
+  async function fetchPastMedicalRecords(userToken: any, patientAddress: string) {
+    console.log(loggedInUser.role)
     const response = loggedInUser.role === UserRole.PATIENT
       ? await apiClient.get('/prescription', { headers: { Authorization: `Bearer ${userToken}` }})
-      : await apiClient.get(`/prescription?patient_wallet=${localStorage.getItem("walletAddress")}`, { headers: { Authorization: `Bearer ${userToken}` }});
+      : await apiClient.get(`/prescription?patient_wallet=${patientAddress}`, { headers: { Authorization: `Bearer ${userToken}` }});
   
     const fetchedMedicalRecords = response.data;
     localStorage.setItem("prescriptions", JSON.stringify(fetchedMedicalRecords));
