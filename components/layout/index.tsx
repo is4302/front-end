@@ -27,7 +27,6 @@ export default function Layout({
   //const { data: session, status } = useSession();
   const { SignInModal, setShowSignInModal } = useSignInModal();
   const scrolled = useScroll(50);
-  //let isAuthenticated = isUserAuthenticated();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter()
   
@@ -37,11 +36,10 @@ export default function Layout({
       const state = await isUserAuthenticated(); // Use 'await' here to get the result of the promise
       if (state) {
         setIsAuthenticated(true);
-        //alert("Authenticated");
       }
     };
     checkAuthentication();
-  }, []); // Add any dependencies if needed
+  }, []);
 
   const logout = () => {
     // Remove the cookie when the user logs out
@@ -71,15 +69,14 @@ export default function Layout({
               height="30"
               className="mr-2 rounded-sm"
             ></Image>
-            <p>Our Project Name</p>
+            <p>HealthBlock</p>
           </Link>
           <div>
           <AnimatePresence>
-              {isAuthenticated == false ? (
+              {!isAuthenticated ? (
                 <Link href={"/login"}>
                 <motion.button
                   className="rounded-full border border-black bg-black p-1.5 px-4 text-sm text-white transition-all hover:bg-white hover:text-black"
-                  //onClick={() => setShowSignInModal(true)}
                   {...FADE_IN_ANIMATION_SETTINGS}
                 >
                   Sign In / Register
