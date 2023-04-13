@@ -8,23 +8,23 @@ Group project built by IS4302 AY22/23 Sem 2 Group 16
 
 **MedGuard** is a Blockchain based healthcare system which help both doctors and patient to better storage, synchronize and verify medical records.
 
-#### Build With
+#### Tech Stack
 
 This project is adapted from [Precedent](https://github.com/steven-tey/precedent) , an open source Next.js template. 
 
 **Front end:**
 
-- [Next.js](https://nextjs.org)
-- [React](https://react.dev)
+- [Next.js]()
+- [React]
 
 **Backend:**
 
-- [Django](https://www.djangoproject.com)
-- [SQLite](https://sqlite.org/index.html)
+- [Django]
+- [SQLite]
 
 **Smart Contract:**
 
-- [Solidity](https://soliditylang.org)
+- [Solidity]
 
 ### Get Started
 
@@ -44,12 +44,37 @@ This project is adapted from [Precedent](https://github.com/steven-tey/precedent
 
 ### Features + UI
 
-- Patient View
+#### Common View
+
+1. Login
+
+![Login](doc/login.png)
+
+#### Patient View
+
+1. Registration
+
+![Patient Registration](doc/patient_registration.png)
+
+2. Landing Page
+
+3. View Doctor List
+
+4. Make an appointment
+
+5. View and verify past medical records
 
 
+#### Doctor View
 
+1. Registration
 
-- Doctor View
+![Doctor Registration](doc/doctor_registration.png)
 
+2. View appointment list
+
+3. View patient's all past medical records
+
+4. Make a prescription
 
 
