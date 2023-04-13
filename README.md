@@ -4,17 +4,13 @@ Group project built by IS4302 AY22/23 Sem 2 Group 16
 
 ### About The Project
 
-
-
 A blockchain-based technique for patients and doctors to manage their medical record
 
-#### Build With
+#### Tech Stack
 
-This project is adapted from [Precedent][https://github.com/steven-tey/precedent] , an open source Next.js template. 
+This project is built with [Next.js](https://nextjs.org/) adapted from [Precedent](https://github.com/steven-tey/precedent) 
+and uses a third-party React UI library - [Ant Design](https://ant.design/)
 
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* 
 
 ### Get Started
 
@@ -34,12 +30,37 @@ This project is adapted from [Precedent][https://github.com/steven-tey/precedent
 
 ### Features + UI
 
+- Common View
+
+1. Login
+
+![Login](doc/login.png)
+
 - Patient View
 
+1. Registration
 
+![Patient Registration](doc/patient_registration.png)
+
+2. Landing Page
+
+3. View Doctor List
+
+4. Make an appointment
+
+5. View and verify past medical records
 
 
 - Doctor View
 
+1. Registration
+
+![Doctor Registration](doc/doctor_registration.png)
+
+2. View appointment list
+
+3. View patient's all past medical records
+
+4. Make a prescription
 
 
