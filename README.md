@@ -4,7 +4,7 @@ Group project built by IS4302 AY22/23 Sem 2 Group 16
 
 ### About The Project
 
-![MedGuard](/public/MedGuard.png)
+![MedGuard](public/MedGuard.png)
 
 **MedGuard** is a Blockchain based healthcare system which help both doctors and patient to better storage, synchronize and verify medical records.
 
