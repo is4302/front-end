@@ -30,13 +30,13 @@ and uses a third-party React UI library - [Ant Design](https://ant.design/)
 
 ### Features + UI
 
-- Common View
+#### Common View
 
 1. Login
 
 ![Login](doc/login.png)
 
-- Patient View
+#### Patient View
 
 1. Registration
 
@@ -51,7 +51,7 @@ and uses a third-party React UI library - [Ant Design](https://ant.design/)
 5. View and verify past medical records
 
 
-- Doctor View
+#### Doctor View
 
 1. Registration
 
