@@ -10,6 +10,7 @@ import {useRouter} from "next/router";
 import Cookies from "js-cookie";
 
 const { TextArea } = Input;
+const json = require('json-keys-sort');
 
 // Dummy data
 const medicalRecord = {
@@ -68,12 +69,17 @@ export default function MakePrescription() {
 
     let medicalRecord = form.getFieldsValue(),
       date = new Date().toISOString().split("T")[0];
-    const medicalData = {
-      ...medicalRecord,
+    let medicalData = {
       date,
+      ...medicalRecord,
       patient: patientAddress,
       doctor: doctorAddress,
     };
+
+    if (!medicalData.notes) {
+      medicalData.notes = ""
+    }
+    medicalData = json.sort(medicalData, true)
     const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(medicalData));
     const medicalDataBuffer = Buffer.from(medicalDataEncoded);
     const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);

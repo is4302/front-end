@@ -7,13 +7,13 @@ import Cookies from "js-cookie";
 import { isUserAuthenticated } from "@/lib/auth";
 import { useRouter } from "next/router";
 import { ethers } from "ethers";
-
 import{getPatientRecordCount, getPrescriptionHash, isPrescriptionApproved, getDoctorRecordCount, getPatientRecord, getNonceByHash} from "web3_api/";
 import apiClient from "@/pages/utils/apiClient";
 import {mockSession} from "next-auth/client/__tests__/helpers/mocks";
 import user = mockSession.user;
 import Link from "next/link";
 
+const json = require('json-keys-sort');
 
 // Dummy data
 // const medicalHistory = [
@@ -41,6 +41,7 @@ const loggedInUser = {
 async function getMedicalRecordStatus(medicalRecord) {
   // Calculate the medicalRecordHash using the medicalRecord
   try{
+    medicalRecord = json.sort(medicalRecord, true)
     const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(medicalRecord));
     const medicalDataBuffer = Buffer.from(medicalDataEncoded);
     const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);
@@ -51,7 +52,7 @@ async function getMedicalRecordStatus(medicalRecord) {
     recordNonce = await getNonceByHash(medicalRecordHash);
     const prescriptionHash = await getPrescriptionHash(recordNonce);
     console.log("hash onchain: ", prescriptionHash);
-  
+
     if (recordNonce == 0) {
       return "unverified";
     } else {
@@ -103,7 +104,6 @@ export default function PatientMedicalHistory() {
     }, [router.isReady]);
 
   async function fetchPastMedicalRecords(userToken: any, patientAddress: string) {
-    console.log(loggedInUser.role)
     const response = loggedInUser.role === UserRole.PATIENT
       ? await apiClient.get('/prescription', { headers: { Authorization: `Bearer ${userToken}` }})
       : await apiClient.get(`/prescription?patient_wallet=${patientAddress}`, { headers: { Authorization: `Bearer ${userToken}` }});
@@ -113,14 +113,13 @@ export default function PatientMedicalHistory() {
   
     const updatedMedicalRecords = await Promise.all(
       fetchedMedicalRecords.map(async (record) => {
-        console.log(record);
+        delete record.randomId
         const status = await getMedicalRecordStatus(record);
         return { ...record, status };
       })
     );
   
     setMedicalRecords(updatedMedicalRecords);
-
   }
   
 
