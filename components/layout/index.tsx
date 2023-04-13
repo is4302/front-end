@@ -64,13 +64,18 @@ export default function Layout({
           <Link href="/" className="flex items-center font-display text-2xl">
             <Image
               src="/logo.png"
-              alt="Precedent logo"
-              width="30"
-              height="30"
-              className="mr-2 rounded-sm"
+              alt="MedGuard logo"
+              width="60"
+              height="60"
+              className="mt-5 mr-2"
             ></Image>
-            <p>HealthBlock</p>
+            <motion.div>
+              <p className="mt-5">MedGuard</p>
+              <p className="text-xs -mt-1.5 font-thin">Keep Your medical data safe and secure</p>
+            </motion.div>
+
           </Link>
+
           <div>
           <AnimatePresence>
               {!isAuthenticated ? (
