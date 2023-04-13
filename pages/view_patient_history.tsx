@@ -8,7 +8,7 @@ import { isUserAuthenticated } from "@/lib/auth";
 import { useRouter } from "next/router";
 import { ethers } from "ethers";
 
-import{getPatientRecordCount, getPrescriptionHash, isPrescriptionApproved, getDoctorRecordCount, getPatientRecord} from "web3_api/";
+import{getPatientRecordCount, getPrescriptionHash, isPrescriptionApproved, getDoctorRecordCount, getPatientRecord, getNonceByHash} from "web3_api/";
 import apiClient from "@/pages/utils/apiClient";
 import {mockSession} from "next-auth/client/__tests__/helpers/mocks";
 import user = mockSession.user;
@@ -44,23 +44,15 @@ async function getMedicalRecordStatus(medicalRecord) {
     const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(medicalRecord));
     const medicalDataBuffer = Buffer.from(medicalDataEncoded);
     const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);
-
-    const patientRecordCount = await getPatientRecordCount(medicalRecord.patientAddress);
-    var recordNonce = -1;
-    for (let i=0; i<patientRecordCount; i++) {
-      var recordNonce = await getPatientRecord(medicalRecord.patientAddress, 0);
-      var recordHashOnChain = await getPrescriptionHash(recordNonce);
-      if (medicalRecordHash===recordHashOnChain) {
-        recordNonce = recordNonce;
-        break;
-      }
-    }
-    const prescriptionHash = await getPrescriptionHash(patientAddress, medicalRecordHash);
+    console.log("patient address:", medicalRecord.patient);
+    console.log("hash: ", medicalRecordHash);
+    //const patientRecordCount = await getPatientRecordCount(medicalRecord.patientAddress);
+    var recordNonce = 0;
+    recordNonce = await getNonceByHash(medicalRecordHash);
+    const prescriptionHash = await getPrescriptionHash(recordNonce);
+    console.log("hash onchain: ", prescriptionHash);
   
-    const doctorRecordCount = await getDoctorRecordCount(doctorAddress, medicalRecordHash);
-    const patientRecord = await getPatientRecord(patientAddress, medicalRecordHash);
-
-    if (recordNonce == -1) {
+    if (recordNonce == 0) {
       return "unverified";
     } else {
       const isApproved = await isPrescriptionApproved(recordNonce);
@@ -121,6 +113,7 @@ export default function PatientMedicalHistory() {
   
     const updatedMedicalRecords = await Promise.all(
       fetchedMedicalRecords.map(async (record) => {
+        console.log(record);
         const status = await getMedicalRecordStatus(record);
         return { ...record, status };
       })
@@ -181,7 +174,7 @@ function renderMedicalRecord(medicalRecord: any, index: number) {
   }
 
   return (
-      <motion.div className="m-3">
+      <motion.div className="m-3" key={index}>
         <Badge.Ribbon text={text} color={color}>
           <Card title={`Date: ${medicalRecord.date}`} size="small">
             <p className="text-gray-600">Diagnosis: {medicalRecord.diagnosis}</p>

@@ -11,7 +11,7 @@ const getWeb3Provider = () => {
 
 
 // Goerli testnet
-const contractAddress = "0x4a7e587F8b45334b14E6F866730EC4Cf6800aC23";
+const contractAddress = "0x495aB642Bbd9c2937cc78674aC2EE4c73223dee8";
 
 export const getUser = async () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum!);
@@ -166,3 +166,23 @@ export const getDoctorCount = async () => {
   return count;
 };
 
+export const getNonceByHash = async (prescriptionHash) => {
+  const provider = getWeb3Provider();
+  const contract = await getContract(provider);
+  const nonce = await contract.getNonceByHash(prescriptionHash);
+  return nonce;
+};
+
+export const isDoctorRegistrated = async (doctorAddress) => {
+  const provider = getWeb3Provider();
+  const contract = await getContract(provider);
+  const registrated = await contract.isDoctorRegistrated(doctorAddress);
+  return registrated;
+};
+
+export const isPatientRegistrated = async (patientAddress) => {
+  const provider = getWeb3Provider();
+  const contract = await getContract(provider);
+  const registrated = await contract.isPatientRegistrated(patientAddress);
+  return registrated;
+};
