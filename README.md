@@ -4,7 +4,7 @@ Group project built by IS4302 AY22/23 Sem 2 Group 16
 
 ### About The Project
 
-![MedGuard](/Users/huilin/Desktop/School Stuff/OneDrive - National University of Singapore/Year3 Sem2/IS4302/front-end/public/MedGuard.png)
+![MedGuard](/public/MedGuard.png)
 
 **MedGuard** is a Blockchain based healthcare system which help both doctors and patient to better storage, synchronize and verify medical records.
 
