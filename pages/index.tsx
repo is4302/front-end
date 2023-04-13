@@ -134,7 +134,7 @@ export default function Landing() {
                     text-4xl tracking-[-0.02em] text-transparent drop-shadow-sm md:text-4xl md:leading-[5rem]"
                     variants={FADE_DOWN_ANIMATION_VARIANTS}
                 >
-                    <Balancer>Welcome to HealthBlock</Balancer>
+                    <Balancer>Welcome to MedGuard</Balancer>
                 </motion.h3>
                 {renderDiffViews()}
             </motion.div>
