@@ -73,7 +73,7 @@ export default function CreateAppointment() {
                   {headers: {Authorization: `Bearer ${userToken}`}})
               .then((response) => {
                 alert("Appointment successfully set");
-                router.push("/landing");
+                router.push("/");
               })
         })
         .catch(err => {
