@@ -4,9 +4,11 @@ Group project built by IS4302 AY22/23 Sem 2 Group 16
 
 ### About The Project
 
-A blockchain-based technique for patients and doctors to manage their medical record
+![MedGuard](public/MedGuard.png)
 
-#### Tech Stack
+**MedGuard** is a Blockchain based healthcare system which help both doctors and patient to better storage, synchronize and verify medical records.
+
+#### Build With
 
 This project is built with [Next.js](https://nextjs.org/) adapted from [Precedent](https://github.com/steven-tey/precedent) 
 and uses a third-party React UI library - [Ant Design](https://ant.design/)
@@ -18,9 +20,9 @@ and uses a third-party React UI library - [Ant Design](https://ant.design/)
 
 2. Clone both backend and frontend code to your local host
 
-  **Front end:** `git clone https://github.com/is4302/front-end.git` or `npx create-next-app MEDGUARD --example https://github.com/is4302/front-end` 
+- **Front end:** `git clone https://github.com/is4302/front-end.git` or `npx create-next-app MEDGUARD --example https://github.com/is4302/front-end` 
 
-  **Backend:** `git clone https://github.com/is4302/back-end.git`
+- **Backend:** `git clone https://github.com/is4302/back-end.git`
 
 3. Under the root, run `npm install` to install all the dependencies
 
@@ -62,5 +64,4 @@ and uses a third-party React UI library - [Ant Design](https://ant.design/)
 3. View patient's all past medical records
 
 4. Make a prescription
-
 
