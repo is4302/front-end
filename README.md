@@ -1,30 +1,20 @@
-# MedGuard - Blockchain Based Healthcare System
+# MEDGUARD - Blockchain Based Healthcare System
 
 Group project built by IS4302 AY22/23 Sem 2 Group 16
 
 ### About The Project
 
-![MEDGUARD Logo](https://github.com/is4302/front-end/public/MEDGUARD.png)
 
-**MedGuard** is a Blockchain based healthcare system which help both doctors and patient to better storage, synchronize and verify medical records.
+
+A blockchain-based technique for patients and doctors to manage their medical record
 
 #### Build With
 
-This project is adapted from [Precedent](https://github.com/steven-tey/precedent) , an open source Next.js template. 
+This project is adapted from [Precedent][https://github.com/steven-tey/precedent] , an open source Next.js template. 
 
-**Front end:**
-
-- [Next.js]()
-- [React]
-
-**Backend:**
-
-- [Django]
-- [SQLite]
-
-**Smart Contract:**
-
-- [Solidity]
+* [![Next][Next.js]][Next-url]
+* [![React][React.js]][React-url]
+* 
 
 ### Get Started
 
