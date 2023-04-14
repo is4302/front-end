@@ -46,9 +46,13 @@ and uses a third-party React UI library - [Ant Design](https://ant.design/)
 
 2. Landing Page
 
+![Patient Landing Page](doc/patient_landing_page.png)
+
 3. View Doctor List
+![Doctor List](doc/doctor_list.png)
 
 4. Make an appointment
+![Patient making appointments](doc/create_appointment.png)
 
 5. View and verify past medical records
 
@@ -60,6 +64,7 @@ and uses a third-party React UI library - [Ant Design](https://ant.design/)
 ![Doctor Registration](doc/doctor_registration.png)
 
 2. View appointment list
+![Doctor appointment list](doc/appointment_list.png)
 
 3. View patient's all past medical records
 
