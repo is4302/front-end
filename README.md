@@ -67,6 +67,7 @@ and uses a third-party React UI library - [Ant Design](https://ant.design/)
 ![Doctor appointment list](doc/appointment_list.png)
 
 3. View patient's all past medical records
+![Patient Past Medical Record](doc/patient_past_medical_records.png)
 
 4. Make a prescription
 
