@@ -11,7 +11,7 @@ const getWeb3Provider = () => {
 
 
 // Goerli testnet
-const contractAddress = "0xBB76f13f7eBD2989Bdf732DE80F7e717f8DB343A";
+const contractAddress = "0xfd306cd785112103838AC9226BEef03A786CB363";
 
 export const getUser = async () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum!);

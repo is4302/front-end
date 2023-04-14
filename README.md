@@ -8,7 +8,6 @@ Group project built by IS4302 AY22/23 Sem 2 Group 16
 
 **MedGuard** is a Blockchain based healthcare system which help both doctors and patient to better storage, synchronize and verify medical records.
 
-+ **Important Note**: The contract address in `web3_api/index.tsx` is a contract address on Ganache local network. To interact with the desired contract, users need to deploy the contract on a test network and update the contract address in `web3_api/index.tsx`.
   
 #### Build With
 
