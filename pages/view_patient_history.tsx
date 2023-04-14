@@ -42,17 +42,12 @@ async function getMedicalRecordStatus(medicalRecord) {
   // Calculate the medicalRecordHash using the medicalRecord
   try{
     medicalRecord = json.sort(medicalRecord, true)
-    console.log("medicalRecord when verifying:", JSON.stringify(medicalRecord));  
     const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(medicalRecord));
     const medicalDataBuffer = Buffer.from(medicalDataEncoded);
     const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);
-    console.log("patient address:", medicalRecord.patient);
-    console.log("hash: ", medicalRecordHash);
-    //const patientRecordCount = await getPatientRecordCount(medicalRecord.patientAddress);
     var recordNonce = 0;
     recordNonce = await getNonceByHash(medicalRecordHash);
     const prescriptionHash = await getPrescriptionHash(recordNonce);
-    console.log("hash onchain: ", prescriptionHash);
 
     if (recordNonce == 0) {
       return "unverified";
@@ -179,18 +174,13 @@ function renderMedicalRecord(medicalRecord: any, index: number) {
     delete recordTemp.status;
     delete recordTemp.randomId;
     recordTemp = json.sort(recordTemp, true);
-    console.log("medicalRecord when verifying:", JSON.stringify(recordTemp));  
     const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(recordTemp));
     const medicalDataBuffer = Buffer.from(medicalDataEncoded);
     const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);
-    console.log("patient address:", medicalRecord.patient);
-    console.log("hash: ", medicalRecordHash);
-    //const patientRecordCount = await getPatientRecordCount(medicalRecord.patientAddress);
     var recordNonce = 0;
     recordNonce = await getNonceByHash(medicalRecordHash); 
     try {
       const tx = await approvePrescription(medicalRecord.patient, recordNonce);
-      console.log(tx);
     } catch (err) {
       alert(err);
     }

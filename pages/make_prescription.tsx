@@ -58,7 +58,6 @@ export default function MakePrescription() {
     const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);
     try {
       const tx = await addPrescription(patientAddress, medicalRecordHash);
-      console.log("Transaction hash:", tx.hash);
   
       // Post the medical data to /prescription only if the transaction is made
       apiClient
@@ -73,7 +72,6 @@ export default function MakePrescription() {
           { headers: { Authorization: `Bearer ${userToken}` } }
         )
         .then((response) => {
-          console.log(response.data);
           alert("Prescription Added");
           router.push("/patient_appointment_list");
         })

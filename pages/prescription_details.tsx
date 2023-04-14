@@ -81,12 +81,10 @@ export default function MakePrescription() {
     }
     medicalData = json.sort(medicalData, true)
     const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(medicalData));
-    console.log("medicalData string when adding: ", JSON.stringify(medicalData));
     const medicalDataBuffer = Buffer.from(medicalDataEncoded);
     const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);
     try {
       const tx = await addPrescription(patientAddress, medicalRecordHash);
-      console.log("Transaction hash:", tx.hash);
   
       // Post the medical data to /prescription only if the transaction is made
       let userToken = Cookies.get('userToken')

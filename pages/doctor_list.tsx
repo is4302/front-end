@@ -46,7 +46,6 @@ export default function Doctors() {
       apiClient
           .get('/list/doctor', {headers: {Authorization: `Bearer ${userToken}`}})
           .then((response) => {
-              console.log(response.data)
               setDoctorsData(response.data)
           })
           .catch(err => {

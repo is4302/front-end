@@ -56,7 +56,6 @@ export default function Register() {
           console.log(err);
         }
         
-        console.log("Transaction hash:", tx.hash);
         apiClient
           .post("/signup/patient", {
             name,
@@ -87,7 +86,7 @@ export default function Register() {
           console.log(err);
         }
         
-        console.log("Transaction hash:", tx.hash);
+        
         apiClient
           .post("/signup/doctor", {
             name,
@@ -110,7 +109,6 @@ export default function Register() {
       }
     } catch (err) {
       alert(err);
-      console.error("Error adding prescription:", err);
     }
   };
 
