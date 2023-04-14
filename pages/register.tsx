@@ -50,7 +50,12 @@ export default function Register() {
       }
 
       if (userType === "patient") {
-        const tx = await addPatient(walletAddress);
+        try {
+          const tx = await addPatient(walletAddress);
+        } catch(err) {
+          console.log(err);
+        }
+        
         console.log("Transaction hash:", tx.hash);
         apiClient
           .post("/signup/patient", {
@@ -76,7 +81,12 @@ export default function Register() {
             alert(err);
           });
       } else if (userType === "doctor") {
-        const tx = await addDoctor(walletAddress);
+        try {
+          const tx = await addDoctor(walletAddress);
+        } catch (err) {
+          console.log(err);
+        }
+        
         console.log("Transaction hash:", tx.hash);
         apiClient
           .post("/signup/doctor", {
