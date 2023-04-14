@@ -11,7 +11,7 @@ const getWeb3Provider = () => {
 
 
 // Goerli testnet
-const contractAddress = "0x495aB642Bbd9c2937cc78674aC2EE4c73223dee8";
+const contractAddress = "0xBB76f13f7eBD2989Bdf732DE80F7e717f8DB343A";
 
 export const getUser = async () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum!);
@@ -56,6 +56,7 @@ export const addPrescription = async (patientAddress, prescriptionHash) => {
   await provider.send("eth_requestAccounts", []);
   const signer = await provider.getSigner();
   const contract = await getContract(signer);
+  console.log("prescriptionHash when adding", prescriptionHash);
   const tx = await contract.addPrescription(patientAddress, prescriptionHash);
   return tx;
 };

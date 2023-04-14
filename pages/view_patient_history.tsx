@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import { isUserAuthenticated } from "@/lib/auth";
 import { useRouter } from "next/router";
 import { ethers } from "ethers";
-import{getPatientRecordCount, getPrescriptionHash, isPrescriptionApproved, getDoctorRecordCount, getPatientRecord, getNonceByHash} from "web3_api/";
+import{getPatientRecordCount, getPrescriptionHash, isPrescriptionApproved, getDoctorRecordCount, getPatientRecord, getNonceByHash, approvePrescription} from "web3_api/";
 import apiClient from "@/pages/utils/apiClient";
 import {mockSession} from "next-auth/client/__tests__/helpers/mocks";
 import user = mockSession.user;
@@ -42,6 +42,7 @@ async function getMedicalRecordStatus(medicalRecord) {
   // Calculate the medicalRecordHash using the medicalRecord
   try{
     medicalRecord = json.sort(medicalRecord, true)
+    console.log("medicalRecord when verifying:", JSON.stringify(medicalRecord));  
     const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(medicalRecord));
     const medicalDataBuffer = Buffer.from(medicalDataEncoded);
     const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);
@@ -172,6 +173,30 @@ function renderMedicalRecord(medicalRecord: any, index: number) {
     color = "red"
   }
 
+  const handleVerify = async()=> {
+    
+    let recordTemp = medicalRecord;
+    delete recordTemp.status;
+    delete recordTemp.randomId;
+    recordTemp = json.sort(recordTemp, true);
+    console.log("medicalRecord when verifying:", JSON.stringify(recordTemp));  
+    const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(recordTemp));
+    const medicalDataBuffer = Buffer.from(medicalDataEncoded);
+    const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);
+    console.log("patient address:", medicalRecord.patient);
+    console.log("hash: ", medicalRecordHash);
+    //const patientRecordCount = await getPatientRecordCount(medicalRecord.patientAddress);
+    var recordNonce = 0;
+    recordNonce = await getNonceByHash(medicalRecordHash); 
+    try {
+      const tx = await approvePrescription(medicalRecord.patient, recordNonce);
+      console.log(tx);
+    } catch (err) {
+      alert(err);
+    }
+    
+  };
+
   return (
       <motion.div className="m-3" key={index}>
         <Badge.Ribbon text={text} color={color}>
@@ -187,7 +212,7 @@ function renderMedicalRecord(medicalRecord: any, index: number) {
             {
               medicalRecord.status === "pending" && loggedInUser.role === UserRole.PATIENT &&
                 <button className="mt-1.5 px-3 py-1.5 text-white bg-blue-500 rounded-md"
-                        onClick={() => console.log("Verify record", medicalRecord.id)}>
+                        onClick={handleVerify}>
                   Verify Record
                 </button>
             }

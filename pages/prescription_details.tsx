@@ -81,6 +81,7 @@ export default function MakePrescription() {
     }
     medicalData = json.sort(medicalData, true)
     const medicalDataEncoded = new TextEncoder().encode(JSON.stringify(medicalData));
+    console.log("medicalData string when adding: ", JSON.stringify(medicalData));
     const medicalDataBuffer = Buffer.from(medicalDataEncoded);
     const medicalRecordHash = ethers.utils.keccak256(medicalDataBuffer);
     try {
